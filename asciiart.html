@@ -818,8 +818,8 @@
                 <div class="control-group">
                     <label for="charSet">charset</label>
                     <select id="charSet">
-                        <option value="vibe" selected>vibe</option>
-                        <option value="standard">standard</option>
+                        <option value="vibe">vibe</option>
+                        <option value="standard" selected>standard</option>
                         <option value="blocks">blocks</option>
                         <option value="detailed">detailed</option>
                         <option value="simple">simple</option>
@@ -839,6 +839,32 @@
                         <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
                         <option value="'Source Code Pro', monospace">Source Code Pro</option>
                     </select>
+                </div>
+
+                <!-- ── NEW: Preprocessing controls ── -->
+                <div class="control-group">
+                    <label for="scaleFactor">scale</label>
+                    <select id="scaleFactor">
+                        <option value="0.25">0.25x</option>
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="2">2x</option>
+                        <option value="4">4x</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <div class="toggle-wrap" id="contrastToggle">
+                        <input type="checkbox" id="contrastCheck" />
+                        <span class="toggle-label">contrast</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="toggle-wrap" id="sharpenToggle">
+                        <input type="checkbox" id="sharpenCheck" />
+                        <span class="toggle-label">sharpen</span>
+                    </div>
                 </div>
 
                 <div class="control-group">
@@ -882,9 +908,9 @@
             <div class="manual">
                 <div class="step"><span class="num">1</span><span class="text"><strong>Upload</strong> — click or drag an image.</span></div>
                 <div class="step"><span class="num">2</span><span class="text"><strong>Adjust</strong> — set chars/line &amp; pick a charset &amp; font.</span></div>
-                <div class="step"><span class="num">3</span><span class="text"><strong>Generate</strong> — press ⚡ and watch the art appear.</span></div>
-                <div class="step"><span class="num">4</span><span class="text"><strong>Export</strong> — download as PNG, SVG, or TXT.</span></div>
-                <div class="step"><span class="num">5</span><span class="text"><strong>Invert</strong> — toggle to reverse brightness.</span></div>
+                <div class="step"><span class="num">3</span><span class="text"><strong>Enhance</strong> — optionally scale, add contrast, or sharpen.</span></div>
+                <div class="step"><span class="num">4</span><span class="text"><strong>Generate</strong> — press ⚡ and watch the art appear.</span></div>
+                <div class="step"><span class="num">5</span><span class="text"><strong>Export</strong> — download as PNG, SVG, or TXT.</span></div>
                 <div class="step"><span class="num">6</span><span class="text"><strong>Copy</strong> — grab the art to your clipboard.</span></div>
             </div>
             <div class="footer-note">⚡ preserves aspect ratio · <span>ASCII Image to Art Converter</span></div>
@@ -956,7 +982,7 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     <div class="explainer-text">
                         <h3>3. brightness mapping</h3>
                         <p>Each brightness level is mapped to a specific character. <span class="highlight">Dense characters</span> like <code>@</code> represent dark areas, while <span class="highlight">sparse characters</span> like <code>.</code> or spaces represent light areas.</p>
-                        <p style="color:#666666; font-size:0.7rem;">The 'vibe' charset is carefully tuned for smooth gradients and high contrast.</p>
+                        <p style="color:#666666; font-size:0.7rem;">The 'standard' charset is the default, but you can choose from many others.</p>
                     </div>
                 </div>
 
@@ -1010,11 +1036,16 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
             const copyBtn = document.getElementById('copyBtn');
             const clearBtn = document.getElementById('clearBtn');
 
+            // ─── NEW: Preprocessing refs ─────────────────────────────
+            const scaleFactor = document.getElementById('scaleFactor');
+            const contrastCheck = document.getElementById('contrastCheck');
+            const sharpenCheck = document.getElementById('sharpenCheck');
+
             // ─── state ──────────────────────────────────────────────────
             let currentImageFile = null;
             let currentAsciiString = '';
             let currentAsciiWidth = 80;
-            let currentCharset = 'vibe';
+            let currentCharset = 'standard';
             let currentInvert = false;
             let originalImage = null;
 
@@ -1077,7 +1108,7 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                         generateBtn.disabled = false;
                         showSuccess('Image loaded — adjust width & generate!');
                     };
-                    img.onerror = function() { showError('Failed to decode image.'); };
+                    img.onerror = function() { showError('Failed to decode image. Use: https://www.iloveimg.com/convert-to-jpg to convert your image to JPG.'); };
                     img.src = e.target.result;
                 };
                 reader.onerror = function() { showError('Failed to read file.'); };
@@ -1106,36 +1137,90 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                 ctx.putImageData(imageData, 0, 0);
             }
 
-            // ─── ASCII conversion (preserves aspect ratio) ───────────
-            function imageToAscii(img, targetWidth, charsetName, invert) {
-                const charset = CHARSETS[charsetName] || CHARSETS.vibe;
+            // ─── NEW: Sharpening filter ──────────────────────────────
+            function applySharpen(imageData) {
+                const data = imageData.data;
+                const width = imageData.width;
+                const height = imageData.height;
+                const output = new Uint8ClampedArray(data);
+                const kernel = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+                const size = 3;
+                const half = Math.floor(size / 2);
+
+                for (let y = half; y < height - half; y++) {
+                    for (let x = half; x < width - half; x++) {
+                        let r = 0,
+                            g = 0,
+                            b = 0;
+                        for (let ky = 0; ky < size; ky++) {
+                            for (let kx = 0; kx < size; kx++) {
+                                const px = (y + ky - half) * width + (x + kx - half);
+                                const idx = px * 4;
+                                const weight = kernel[ky * size + kx];
+                                r += data[idx] * weight;
+                                g += data[idx + 1] * weight;
+                                b += data[idx + 2] * weight;
+                            }
+                        }
+                        const idx = (y * width + x) * 4;
+                        output[idx] = Math.min(255, Math.max(0, r));
+                        output[idx + 1] = Math.min(255, Math.max(0, g));
+                        output[idx + 2] = Math.min(255, Math.max(0, b));
+                        output[idx + 3] = data[idx + 3];
+                    }
+                }
+                return output;
+            }
+
+            // ─── ASCII conversion (with preprocessing) ──────────────
+            function imageToAscii(img, targetWidth, charsetName, invert, scale, contrast, sharpen) {
+                const charset = CHARSETS[charsetName] || CHARSETS.standard;
                 const aspect = img.width / img.height;
                 const charAspect = 0.52;
-                const targetHeight = Math.max(1, Math.round(targetWidth / aspect * charAspect));
+
+                // Apply scale factor
+                const finalWidth = Math.round(targetWidth * scale);
+                const targetHeight = Math.max(1, Math.round(finalWidth / aspect * charAspect));
 
                 const canvas = document.createElement('canvas');
-                canvas.width = targetWidth;
+                canvas.width = finalWidth;
                 canvas.height = targetHeight;
                 const ctx = canvas.getContext('2d');
                 ctx.imageSmoothingEnabled = true;
-                ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+                ctx.drawImage(img, 0, 0, finalWidth, targetHeight);
 
-                const imageData = ctx.getImageData(0, 0, targetWidth, targetHeight);
-                const data = imageData.data;
-                const total = targetWidth * targetHeight;
+                const imageData = ctx.getImageData(0, 0, finalWidth, targetHeight);
+                let data = imageData.data;
+
+                // Apply sharpen if enabled
+                if (sharpen) {
+                    const sharpened = applySharpen(imageData);
+                    data = sharpened;
+                }
+
+                // Convert to grayscale and apply contrast
+                const total = finalWidth * targetHeight;
                 const gray = new Uint8Array(total);
+                const contrastFactor = contrast ? 1.5 : 1.0;
 
                 for (let i = 0; i < total; i++) {
                     const idx = i * 4;
-                    gray[i] = Math.round(0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2]);
+                    let g = Math.round(0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2]);
+                    if (contrast) {
+                        // Apply contrast: (value - 128) * factor + 128
+                        g = (g - 128) * contrastFactor + 128;
+                        g = Math.min(255, Math.max(0, g));
+                    }
+                    gray[i] = g;
                 }
 
+                // Map to ASCII
                 const lines = [];
                 const len = charset.length;
                 for (let y = 0; y < targetHeight; y++) {
                     let line = '';
-                    for (let x = 0; x < targetWidth; x++) {
-                        const idx = y * targetWidth + x;
+                    for (let x = 0; x < finalWidth; x++) {
+                        const idx = y * finalWidth + x;
                         let val = gray[idx] / 255;
                         if (invert) val = 1 - val;
                         if (val < 0) val = 0;
@@ -1145,9 +1230,10 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     }
                     lines.push(line);
                 }
+
                 return {
                     ascii: lines.join('\n'),
-                    width: targetWidth,
+                    width: finalWidth,
                     height: targetHeight
                 };
             }
@@ -1164,22 +1250,25 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     showError('Width must be at least 4.');
                     return;
                 }
-                currentAsciiWidth = width;
-                currentCharset = charSetSelect.value;
-                currentInvert = invertCheck.checked;
+
+                // Get preprocessing values
+                const scale = parseFloat(scaleFactor.value);
+                const contrast = contrastCheck.checked;
+                const sharpen = sharpenCheck.checked;
+                const invert = invertCheck.checked;
+                const charset = charSetSelect.value;
 
                 try {
-                    const result = imageToAscii(originalImage, width, currentCharset, currentInvert);
+                    const result = imageToAscii(originalImage, width, charset, invert, scale, contrast, sharpen);
                     currentAsciiString = result.ascii;
                     asciiOutput.textContent = currentAsciiString;
-                    // apply selected font
                     asciiOutput.style.fontFamily = fontSelector.value;
                     outputCard.style.display = 'block';
                     downloadPngBtn.disabled = false;
                     downloadSvgBtn.disabled = false;
                     downloadTxtBtn.disabled = false;
                     const lines = currentAsciiString.split('\n').length;
-                    showSuccess(`Generated ${result.width}×${result.height} · ${lines} lines · charset: ${currentCharset}`);
+                    showSuccess(`Generated ${result.width}×${result.height} · ${lines} lines · charset: ${charset}`);
                 } catch (err) {
                     showError('Generation error: ' + err.message);
                 }
@@ -1203,7 +1292,6 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     const ctx = canvas.getContext('2d');
                     ctx.fillStyle = '#000000';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    // use selected font
                     ctx.font = `${fontSize}px ${fontSelector.value}`;
                     ctx.textBaseline = 'top';
                     ctx.fillStyle = '#cccccc';
@@ -1229,7 +1317,6 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     const pad = 32;
                     const sw = maxLen * charW + pad * 2;
                     const sh = lines.length * lineH + pad * 2;
-                    // use selected font in SVG
                     let svg =
                         `<svg xmlns="http://www.w3.org/2000/svg" width="${sw}" height="${sh}" viewBox="0 0 ${sw} ${sh}">
               <rect width="100%" height="100%" fill="#000000"/>
@@ -1314,7 +1401,6 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
 
             // ─── font selector ─────────────────────────────────────────
             fontSelector.addEventListener('change', function() {
-                // update live preview font if there's content
                 if (currentAsciiString) {
                     asciiOutput.style.fontFamily = this.value;
                 }
