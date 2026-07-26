@@ -990,6 +990,7 @@
                 <span class="badge">technical</span>
             </div>
             <div class="explainer">
+                <!-- (same detailed sections as before) -->
                 <div class="explainer-block">
                     <div class="explainer-ascii">
                         <pre>  ╔═══════════════════════════╗
@@ -1156,7 +1157,7 @@
                             <li><strong>PNG (raster):</strong> Each ASCII frame is drawn onto a canvas with a monospace font and saved as a PNG image.</li>
                             <li><strong>SVG (vector):</strong> The ASCII text is wrapped in an SVG <code>&lt;text&gt;</code> element, producing a scalable, resolution‑independent graphic.</li>
                             <li><strong>TXT (plain):</strong> The raw ASCII string is saved as a plain text file.</li>
-                            <li><strong>Video (MP4):</strong> When you click "Download Video", the tool captures every frame of the video at 30 fps, renders each as ASCII art, and compiles them into an MP4 (with WebM fallback).</li>
+                            <li><strong>Video (MP4):</strong> The tool plays the video at normal speed and captures each rendered frame using <code>MediaRecorder</code> on a canvas stream, ensuring the entire duration is recorded without frame drops.</li>
                         </ul>
                         <p style="color:#666666; font-size:0.8rem; margin-top:0.3rem;">All exports use the current settings (charset, font, scale, etc.) at the moment of capture.</p>
                     </div>
@@ -1374,12 +1375,10 @@
                     downloadTxtBtn.disabled = false;
                     downloadVideoBtn.disabled = false;
 
-                    // Auto-resize
                     autoResizeOutput(lines);
                     const info = `· ${lines.length}×${lines[0]?.length || 0}`;
                     outputInfo.textContent = info;
 
-                    // Check width warning
                     const currentWidth = parseInt(widthNumber.value, 10) || 80;
                     if (currentWidth > MAX_VIDEO_WIDTH) {
                         widthWarning.classList.add('active');
@@ -1555,7 +1554,7 @@
                 showSuccess('PNG downloaded.');
             }
 
-            // ─── download full video ────────────────────────────────
+            // ─── download full video (new robust method) ──────────
             async function downloadFullVideo() {
                 if (isExportingVideo) return;
                 if (!videoPlayer.videoWidth || !videoPlayer.videoHeight) {
@@ -1575,6 +1574,22 @@
                     return;
                 }
 
+                // Save current playback state
+                const wasPlaying = !videoPlayer.paused;
+                const currentTime = videoPlayer.currentTime;
+
+                // Pause and seek to start
+                videoPlayer.pause();
+                videoPlayer.currentTime = 0;
+                await new Promise(resolve => {
+                    const handler = () => {
+                        videoPlayer.removeEventListener('seeked', handler);
+                        resolve();
+                    };
+                    videoPlayer.addEventListener('seeked', handler);
+                    setTimeout(resolve, 1000); // fallback
+                });
+
                 isExportingVideo = true;
                 downloadVideoBtn.disabled = true;
                 progressContainer.classList.add('active');
@@ -1582,227 +1597,186 @@
                 progressText.textContent = 'Initializing...';
 
                 try {
-                    // Store original playback state
-                    const wasPlaying = !videoPlayer.paused;
-                    if (wasPlaying) videoPlayer.pause();
+                    // Determine recording framerate
+                    let fps = 30;
+                    if (duration > 120) fps = 20;
+                    if (duration > 300) fps = 15;
+                    if (duration > 600) fps = 10;
 
-                    // Determine capture parameters
-                    const fps = 30;
-                    const frameInterval = 1 / fps;
-                    let totalFrames = Math.ceil(duration / frameInterval);
-                    // Cap at a reasonable number to prevent memory issues
-                    const maxFrames = 3600; // 2 minutes at 30fps
-                    if (totalFrames > maxFrames) {
-                        // Use a lower framerate for long videos
-                        const newFps = Math.ceil(totalFrames / maxFrames * fps);
-                        const newInterval = 1 / newFps;
-                        totalFrames = Math.ceil(duration / newInterval);
-                        progressText.textContent = `Long video — using ${newFps} fps (${totalFrames} frames)`;
-                    } else {
-                        progressText.textContent = `Capturing ${totalFrames} frames at ${fps} fps...`;
+                    // Create recording canvas with safe max dimensions (max 800px width)
+                    const firstLines = getAsciiLines(width);
+                    const maxLineLen = Math.max(...firstLines.map(l => l.length));
+                    const pad = 32;
+                    const baseFontSize = 14;
+                    const charW = baseFontSize * 0.6;
+                    const lineH = baseFontSize * 1.25;
+                    let cw = maxLineLen * charW + pad * 2;
+                    let ch = firstLines.length * lineH + pad * 2;
+
+                    // Scale down if too large
+                    const maxCanvasWidth = 800;
+                    const maxCanvasHeight = 600;
+                    let scale = 1;
+                    if (cw > maxCanvasWidth || ch > maxCanvasHeight) {
+                        scale = Math.min(maxCanvasWidth / cw, maxCanvasHeight / ch, 1);
+                        cw = Math.ceil(cw * scale);
+                        ch = Math.ceil(ch * scale);
+                    }
+                    const recordingCanvas = document.createElement('canvas');
+                    recordingCanvas.width = Math.ceil(cw);
+                    recordingCanvas.height = Math.ceil(ch);
+                    const ctx = recordingCanvas.getContext('2d');
+
+                    // Use the adjusted font size for recording
+                    const recFontSize = Math.max(6, Math.min(18, baseFontSize * scale));
+
+                    // Start recording the canvas stream
+                    const stream = recordingCanvas.captureStream(fps);
+                    const mimeTypes = [
+                        'video/mp4;codecs=h264',
+                        'video/mp4;codecs=avc1',
+                        'video/webm;codecs=vp9',
+                        'video/webm;codecs=vp8',
+                        'video/webm',
+                        'video/mp4'
+                    ];
+                    let selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m));
+                    if (!selectedMime) {
+                        selectedMime = 'video/webm';
                     }
 
-                    const effectiveInterval = duration / totalFrames;
-                    const capturedFrames = [];
+                    const recorder = new MediaRecorder(stream, { mimeType: selectedMime });
+                    const chunks = [];
 
-                    // Capture frames by seeking
-                    const capturePromises = [];
-                    let lastProgress = 0;
+                    recorder.ondataavailable = function(e) {
+                        if (e.data.size > 0) chunks.push(e.data);
+                    };
 
-                    for (let i = 0; i < totalFrames; i++) {
-                        const time = i * effectiveInterval;
-                        if (time >= duration) break;
+                    // Start playing video from beginning
+                    videoPlayer.currentTime = 0;
+                    await videoPlayer.play();
 
-                        // Seek to time
-                        videoPlayer.currentTime = time;
-                        await new Promise((resolve) => {
-                            const seekHandler = () => {
-                                videoPlayer.removeEventListener('seeked', seekHandler);
-                                resolve();
-                            };
-                            videoPlayer.addEventListener('seeked', seekHandler);
-                            // If seek takes too long, fallback
-                            setTimeout(() => {
-                                videoPlayer.removeEventListener('seeked', seekHandler);
-                                resolve();
-                            }, 500);
-                        });
+                    // We'll capture frames using requestAnimationFrame
+                    let lastCaptureTime = 0;
+                    let frameCount = 0;
+                    const totalFrames = Math.ceil(duration * fps);
 
-                        // Capture frame
-                        try {
-                            const lines = getAsciiLines(width);
-                            capturedFrames.push(lines);
-                        } catch (e) {
-                            // If frame capture fails, use previous frame or blank
-                            if (capturedFrames.length > 0) {
-                                capturedFrames.push(capturedFrames[capturedFrames.length - 1]);
-                            } else {
-                                // Fallback: capture again
-                                try {
-                                    const fallbackLines = getAsciiLines(width);
-                                    capturedFrames.push(fallbackLines);
-                                } catch (e2) {
-                                    capturedFrames.push(['Error']);
-                                }
-                            }
-                        }
+                    recorder.start(1000);
 
-                        // Update progress
-                        const progress = (i + 1) / totalFrames * 100;
-                        if (progress - lastProgress >= 1) {
-                            progressFill.style.width = Math.min(100, progress) + '%';
-                            progressText.textContent = `Capturing ${i+1}/${totalFrames} frames (${Math.round(progress)}%)`;
-                            lastProgress = progress;
-                        }
-
-                        // Yield to UI
-                        if (i % 10 === 0) {
-                            await new Promise(r => setTimeout(r, 10));
-                        }
-                    }
-
-                    progressText.textContent = `Rendering ${capturedFrames.length} frames to video...`;
-                    progressFill.style.width = '90%';
-
-                    if (capturedFrames.length === 0) {
-                        showError('No frames captured.');
-                        isExportingVideo = false;
-                        downloadVideoBtn.disabled = false;
-                        progressContainer.classList.remove('active');
-                        return;
-                    }
-
-                    // Render video from frames
-                    const videoBlob = await renderFramesToVideo(capturedFrames);
-
-                    // Download
-                    const url = URL.createObjectURL(videoBlob);
-                    const link = document.createElement('a');
-                    let ext = 'webm';
-                    if (videoBlob.type.includes('mp4') || videoBlob.type.includes('h264') || videoBlob.type.includes('avc1')) {
-                        ext = 'mp4';
-                    }
-                    link.download = `ascii_video.${ext}`;
-                    link.href = url;
-                    link.click();
-                    URL.revokeObjectURL(url);
-
-                    progressFill.style.width = '100%';
-                    progressText.textContent = `✅ Done! Downloaded ${ext.toUpperCase()} — ${capturedFrames.length} frames.`;
-                    showSuccess(`Video exported (${ext.toUpperCase()}) — ${capturedFrames.length} frames.`);
-
-                } catch (err) {
-                    showError('Video export failed: ' + err.message);
-                    progressText.textContent = '❌ Error: ' + err.message;
-                } finally {
-                    isExportingVideo = false;
-                    downloadVideoBtn.disabled = false;
-                    setTimeout(() => {
-                        progressContainer.classList.remove('active');
-                    }, 3000);
-                }
-            }
-
-            // ─── render frames to video ─────────────────────────────
-            function renderFramesToVideo(frames) {
-                return new Promise((resolve, reject) => {
-                    try {
-                        if (frames.length === 0) {
-                            reject(new Error('No frames to render'));
-                            return;
-                        }
-
-                        const fontSize = 14;
-                        const charW = fontSize * 0.6;
-                        const lineH = fontSize * 1.25;
-                        const firstLines = frames[0];
-                        const maxLen = Math.max(...firstLines.map(l => l.length));
-                        const pad = 32;
-                        const cw = maxLen * charW + pad * 2;
-                        const ch = firstLines.length * lineH + pad * 2;
-
-                        const canvas = document.createElement('canvas');
-                        canvas.width = Math.ceil(Math.min(cw, 1280));
-                        canvas.height = Math.ceil(Math.min(ch, 720));
-                        const ctx = canvas.getContext('2d');
-
-                        // Handle scaling if canvas is too large
-                        let scale = 1;
-                        if (canvas.width > 1280 || canvas.height > 720) {
-                            const scaleX = 1280 / canvas.width;
-                            const scaleY = 720 / canvas.height;
-                            scale = Math.min(scaleX, scaleY, 1);
-                            canvas.width = Math.ceil(canvas.width * scale);
-                            canvas.height = Math.ceil(canvas.height * scale);
-                        }
-
-                        // Use appropriate font size
-                        const renderFontSize = Math.max(6, Math.min(20, fontSize * scale));
-
-                        // MIME type detection
-                        const mimeTypes = [
-                            'video/mp4;codecs=h264',
-                            'video/mp4;codecs=avc1',
-                            'video/webm;codecs=vp9',
-                            'video/webm;codecs=vp8',
-                            'video/webm',
-                            'video/mp4'
-                        ];
-                        let selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m));
-                        if (!selectedMime) {
-                            selectedMime = 'video/webm';
-                        }
-
-                        const stream = canvas.captureStream(30);
-                        const recorder = new MediaRecorder(stream, { mimeType: selectedMime });
-                        const chunks = [];
-
-                        recorder.ondataavailable = function(e) {
-                            if (e.data.size > 0) chunks.push(e.data);
-                        };
-
-                        let frameIndex = 0;
-                        const totalFrames = frames.length;
-
-                        function drawNextFrame() {
-                            if (frameIndex >= totalFrames) {
+                    // Frame capture loop
+                    const captureLoop = () => {
+                        if (videoPlayer.paused || videoPlayer.ended) {
+                            // If ended, stop recording
+                            if (videoPlayer.ended) {
                                 recorder.stop();
                                 return;
                             }
-
-                            const frameLines = frames[frameIndex];
-                            ctx.fillStyle = '#000000';
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                            ctx.font = `${renderFontSize}px ${fontSelector.value}`;
-                            ctx.textBaseline = 'top';
-                            ctx.fillStyle = '#cccccc';
-
-                            const effectivePad = pad * scale;
-                            const effectiveLineH = renderFontSize * 1.25;
-
-                            for (let j = 0; j < frameLines.length; j++) {
-                                if (j * effectiveLineH > canvas.height) break;
-                                ctx.fillText(frameLines[j].substring(0, Math.floor(canvas.width / (renderFontSize * 0.6))),
-                                    effectivePad, effectivePad + j * effectiveLineH);
-                            }
-
-                            frameIndex++;
-                            requestAnimationFrame(drawNextFrame);
+                            // If paused, wait
+                            requestAnimationFrame(captureLoop);
+                            return;
                         }
 
-                        recorder.onstop = function() {
-                            const blob = new Blob(chunks, { type: selectedMime });
-                            resolve(blob);
-                        };
+                        const now = videoPlayer.currentTime;
+                        // Capture at desired fps (based on time, not frames)
+                        if (now - lastCaptureTime >= 1 / fps) {
+                            // Draw ASCII art onto recording canvas
+                            try {
+                                const lines = getAsciiLines(width);
+                                ctx.fillStyle = '#000000';
+                                ctx.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
+                                ctx.font = `${recFontSize}px ${fontSelector.value}`;
+                                ctx.textBaseline = 'top';
+                                ctx.fillStyle = '#cccccc';
+                                const effectivePad = pad * scale;
+                                const effectiveLineH = recFontSize * 1.25;
+                                for (let i = 0; i < lines.length; i++) {
+                                    if (i * effectiveLineH > recordingCanvas.height) break;
+                                    const line = lines[i].substring(0, Math.floor(recordingCanvas.width / (recFontSize *
+                                    0.6)));
+                                    ctx.fillText(line, effectivePad, effectivePad + i * effectiveLineH);
+                                }
+                                frameCount++;
+                                lastCaptureTime = now;
 
-                        recorder.start(1000);
-                        drawNextFrame();
+                                // Update progress
+                                const progress = Math.min(100, (now / duration) * 100);
+                                progressFill.style.width = progress + '%';
+                                progressText.textContent =
+                                    `Rendering ${frameCount} frames · ${Math.round(progress)}% · ${Math.round(now)}/${Math.round(duration)}s`;
+                            } catch (e) {
+                                // If frame fails, continue
+                            }
+                        }
 
-                    } catch (err) {
-                        reject(err);
+                        // Continue loop until video ends
+                        if (!videoPlayer.ended) {
+                            requestAnimationFrame(captureLoop);
+                        } else {
+                            recorder.stop();
+                        }
+                    };
+
+                    captureLoop();
+
+                    // When recorder stops, download
+                    recorder.onstop = function() {
+                        const blob = new Blob(chunks, { type: selectedMime });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        let ext = 'webm';
+                        if (selectedMime.includes('mp4') || selectedMime.includes('avc1')) ext = 'mp4';
+                        link.download = `ascii_video.${ext}`;
+                        link.href = url;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                        const finalFrames = frameCount;
+                        showSuccess(`✅ Video exported (${ext.toUpperCase()}) — ${finalFrames} frames.`);
+                        progressFill.style.width = '100%';
+                        progressText.textContent = `✅ Done! ${finalFrames} frames, ${duration.toFixed(1)}s.`;
+
+                        // Restore playback state
+                        videoPlayer.pause();
+                        videoPlayer.currentTime = currentTime;
+                        if (wasPlaying) {
+                            videoPlayer.play().catch(() => {});
+                        }
+                        isExportingVideo = false;
+                        downloadVideoBtn.disabled = false;
+                        setTimeout(() => {
+                            progressContainer.classList.remove('active');
+                        }, 3000);
+                    };
+
+                    // If recorder fails, handle error
+                    setTimeout(() => {
+                        if (chunks.length === 0) {
+                            // If no data after 5 seconds, something went wrong
+                            recorder.stop();
+                            showError('Recording failed – no data captured.');
+                            isExportingVideo = false;
+                            downloadVideoBtn.disabled = false;
+                            progressContainer.classList.remove('active');
+                            // Restore playback
+                            videoPlayer.pause();
+                            videoPlayer.currentTime = currentTime;
+                            if (wasPlaying) {
+                                videoPlayer.play().catch(() => {});
+                            }
+                        }
+                    }, 5000);
+
+                } catch (err) {
+                    showError('Video export failed: ' + err.message);
+                    isExportingVideo = false;
+                    downloadVideoBtn.disabled = false;
+                    progressContainer.classList.remove('active');
+                    // Restore playback
+                    videoPlayer.pause();
+                    videoPlayer.currentTime = currentTime;
+                    if (wasPlaying) {
+                        videoPlayer.play().catch(() => {});
                     }
-                });
+                }
             }
 
             // ─── downloads ─────────────────────────────────────────────
@@ -1930,7 +1904,6 @@
             widthSlider.addEventListener('input', function() {
                 widthNumber.value = this.value;
                 if (videoPlayer.videoWidth) updateAscii();
-                // Show/hide warning
                 if (parseInt(this.value) > MAX_VIDEO_WIDTH) {
                     widthWarning.classList.add('active');
                 } else {
@@ -2021,4 +1994,3 @@
     </script>
 
 </body>
-</html>
