@@ -68,9 +68,9 @@
         .ascii-header .logo {
             display: inline-block;
             background: #0a0a0a;
-            padding: 0.4rem 1.2rem 0.2rem 1.2rem;
-            border-radius: 12px;
-            border: 1px solid #333333;
+            padding: 0.8rem 1.5rem 0.4rem 1.5rem;
+            border-radius: 16px;
+            border: 1px solid #444444;
             transition: border-color 0.3s;
         }
 
@@ -79,33 +79,35 @@
         }
 
         .ascii-header .logo pre {
-            font-size: 0.65rem;
+            font-size: 0.9rem;
             line-height: 1.1;
             color: #ffffff;
-            letter-spacing: 0.8px;
+            letter-spacing: 1px;
             white-space: pre;
             margin: 0;
+            text-shadow: 0 0 30px #ffffff22;
         }
 
         .ascii-header .subtitle {
-            font-size: 0.7rem;
-            letter-spacing: 3px;
+            font-size: 0.8rem;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            color: #666666;
-            margin-top: 0.3rem;
+            color: #888888;
+            margin-top: 0.5rem;
             font-weight: 300;
         }
 
         .ascii-header .subtitle span {
             color: #ffffff;
+            text-shadow: 0 0 20px #ffffff44;
         }
 
         .glow-divider {
             border: none;
-            height: 1px;
-            background: #333333;
-            margin: 0.5rem auto 0 auto;
-            max-width: 70%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #444444, #888888, #444444, transparent);
+            margin: 0.8rem auto 0 auto;
+            max-width: 80%;
         }
 
         /* ── cards ── */
@@ -614,7 +616,7 @@
         .explainer {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
         .explainer-block {
@@ -637,9 +639,9 @@
             padding: 0.8rem 1rem;
             border-radius: 8px;
             border: 1px solid #1a1a1a;
-            font-size: 0.65rem;
-            line-height: 1.3;
-            color: #888888;
+            font-size: 0.7rem;
+            line-height: 1.4;
+            color: #aaaaaa;
             min-width: 140px;
             font-family: 'Courier New', monospace;
             white-space: pre;
@@ -652,17 +654,20 @@
         }
 
         .explainer-text h3 {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #ffffff;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.3rem;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 0.3rem;
         }
 
         .explainer-text p {
-            font-size: 0.8rem;
-            color: #999999;
-            margin-bottom: 0.2rem;
+            font-size: 0.85rem;
+            color: #bbbbbb;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
         }
 
         .explainer-text .highlight {
@@ -682,6 +687,22 @@
             color: #eeeeee;
             border: 1px solid #2a2a2a;
             font-family: inherit;
+        }
+
+        .explainer-text ul {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .explainer-text ul li::before {
+            content: "▸ ";
+            color: #888888;
+        }
+
+        .explainer-text ul li {
+            font-size: 0.8rem;
+            color: #aaaaaa;
+            margin-bottom: 0.2rem;
         }
 
         /* ── responsive ── */
@@ -713,7 +734,7 @@
                 gap: 1rem;
             }
             .ascii-header .logo pre {
-                font-size: 0.45rem;
+                font-size: 0.6rem;
             }
             .ascii-output {
                 font-size: 10px;
@@ -730,7 +751,7 @@
             .explainer-ascii {
                 width: 100%;
                 text-align: center;
-                font-size: 0.55rem;
+                font-size: 0.6rem;
             }
         }
 
@@ -739,7 +760,7 @@
                 grid-template-columns: 1fr;
             }
             .ascii-header .logo pre {
-                font-size: 0.35rem;
+                font-size: 0.4rem;
             }
             .upload-zone {
                 padding: 1.5rem 0.8rem;
@@ -754,7 +775,7 @@
                 max-width: 120px;
             }
             .explainer-ascii {
-                font-size: 0.45rem;
+                font-size: 0.5rem;
             }
         }
 
@@ -789,13 +810,13 @@
         <header class="ascii-header">
             <div class="logo">
                 <pre>
-     █████╗ ███████╗ ██████╗██╗██╗
-    ██╔══██╗██╔════╝██╔════╝██║██║
-    ███████║███████╗██║     ██║██║
-    ██╔══██║╚════██║██║     ██║██║
-    ██║  ██║███████║╚██████╗██║██║
-    ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝
-                </pre>
+     █████╗ ███████╗ ██████╗██╗██╗      ██╗███╗   ███╗ █████╗  ██████╗ ███████╗
+    ██╔══██╗██╔════╝██╔════╝██║██║      ██║████╗ ████║██╔══██╗██╔════╝ ██╔════╝
+    ███████║███████╗██║     ██║██║      ██║██╔████╔██║███████║██║  ███╗█████╗  
+    ██╔══██║╚════██║██║     ██║██║      ██║██║╚██╔╝██║██╔══██║██║   ██║██╔══╝  
+    ██║  ██║███████║╚██████╗██║██║      ██║██║ ╚═╝ ██║██║  ██║╚██████╔╝███████╗
+    ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝      ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+</pre>
             </div>
             <div class="subtitle">✦ <span>image</span> to <span>art</span> converter ✦</div>
             <div class="glow-divider"></div>
@@ -918,7 +939,7 @@
                 <span style="color:#ffffff; font-size:1.1rem;">⎔</span>
                 <span style="font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; color:#888888;">how to use</span>
                 <span style="flex:1; border-bottom:1px solid #1a1a1a;"></span>
-                <span class="badge">vibe</span>
+                <span class="badge">use</span>
             </div>
             <div class="manual">
                 <div class="step"><span class="num">1</span><span class="text"><strong>Upload</strong> — click or drag an image.</span></div>
@@ -934,10 +955,10 @@
         <!-- ═══ BEHIND THE SCENES CARD ═══ -->
         <div class="card" style="border-color:#1a1a1a;">
             <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.2rem;">
-                <span style="color:#ffffff; font-size:1.1rem;">⎇</span>
-                <span style="font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; color:#888888;">behind the scenes</span>
+                <span style="color:#ffffff; font-size:1.2rem;">⎇</span>
+                <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:3px; color:#888888;">the algorithm — deep dive</span>
                 <span style="flex:1; border-bottom:1px solid #1a1a1a;"></span>
-                <span class="badge">how it works</span>
+                <span class="badge">technical</span>
             </div>
 
             <div class="explainer">
@@ -951,78 +972,183 @@
   \_________/
        |
        v
-  +-------+
-  | PIXEL |
-  | DATA  |
-  +-------+</pre>
+  +-------------------+
+  |   File Reader     |
+  |   (Blob → DataURL)|
+  +-------------------+
+       |
+       v
+  +-------------------+
+  |   Image Object    |
+  |   (Decoded Pixels)|
+  +-------------------+</pre>
                     </div>
                     <div class="explainer-text">
-                        <h3>1. upload &amp; decode</h3>
-                        <p>Your image is read pixel by pixel. Each pixel's RGB values are combined into a single <span class="highlight">brightness value</span> (0 = black, 255 = white).</p>
-                        <p style="color:#666666; font-size:0.7rem;">This grayscale conversion is the foundation of the entire process.</p>
+                        <h3>1. upload &amp; pixel decoding</h3>
+                        <p>When you select an image, the browser reads it as a <span class="highlight">Data URL</span> and decodes it into an <span class="code">Image</span> object. We then draw this image onto a hidden <span class="code">&lt;canvas&gt;</span> element to access the raw pixel data using <span class="code">getImageData()</span>.</p>
+                        <ul>
+                            <li><strong>FileReader API:</strong> Converts the file to a base64 string.</li>
+                            <li><strong>Canvas 2D Context:</strong> Provides pixel-level access to the image.</li>
+                            <li><strong>Pixel Array:</strong> A <span class="code">Uint8ClampedArray</span> containing RGBA values (0–255) for every pixel.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.75rem;">This gives us raw access to the image data without any lossy compression artifacts.</p>
                     </div>
                 </div>
 
                 <!-- Step 2 -->
                 <div class="explainer-block">
                     <div class="explainer-ascii">
-                        <pre>+---+---+---+
-| 0 | 1 | 0 |
-+---+---+---+
-| 1 | 0 | 1 |
-+---+---+---+
-| 0 | 1 | 0 |
-+---+---+---+
-
-  width: 80 chars
-  height: auto</pre>
+                        <pre>  ┌─────────────────────────────────────┐
+  │   GRAYSCALE LUMINANCE FORMULA       │
+  │   Y = 0.299 · R + 0.587 · G         │
+  │       + 0.114 · B                   │
+  ├─────────────────────────────────────┤
+  │   R (Red)   →  29.9%                │
+  │   G (Green) →  58.7%                │
+  │   B (Blue)  →  11.4%                │
+  └─────────────────────────────────────┘
+         │
+         ▼
+  ┌─────────────────────────────────────┐
+  │   Brightness values (0–255)         │
+  └─────────────────────────────────────┘</pre>
                     </div>
                     <div class="explainer-text">
-                        <h3>2. resize &amp; preserve ratio</h3>
-                        <p>The image is resized to match your desired <span class="highlight">characters per line</span>. The height is calculated automatically to preserve the original aspect ratio.</p>
-                        <p style="color:#666666; font-size:0.7rem;">A special correction factor accounts for the shape of monospace characters (they're taller than they are wide).</p>
+                        <h3>2. grayscale conversion</h3>
+                        <p>Each pixel's RGB values are combined into a single <span class="highlight">luminance (brightness)</span> value using the ITU‑R BT.709 standard formula.</p>
+                        <ul>
+                            <li><strong>Why these coefficients?</strong> The human eye is most sensitive to green, followed by red, and least sensitive to blue.</li>
+                            <li><strong>Formula:</strong> <span class="code">Y = 0.299·R + 0.587·G + 0.114·B</span></li>
+                            <li><strong>Result:</strong> A single value per pixel representing perceived brightness (0 = black, 255 = white).</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.75rem;">This mimics how the human visual system processes light, creating a more natural grayscale representation.</p>
                     </div>
                 </div>
 
                 <!-- Step 3 -->
                 <div class="explainer-block">
                     <div class="explainer-ascii">
-                        <pre>DARK  ■■■■■■■■■■  LIGHT
-
-@ # 8 W M * o a h k b d p q w m
-Z O 0 Q L C J U Y X z c v u n x
-r j f t / \ | ( ) 1 { } [ ] ? -
-_ + ~ < > i ! l I ; : " ^ ` ' .</pre>
+                        <pre>  ┌─────────────┐
+  │   FRAME     │
+  │   (raw)     │
+  │   W × H     │
+  └──────┬──────┘
+         │
+         ▼  scale factor
+  ┌─────────────┐
+  │   SCALED    │
+  │   IMAGE     │
+  │   W × H     │
+  │   W = chars │
+  │   × scale   │
+  │   H = auto  │
+  └──────┬──────┘
+         │
+         ▼  monospace correction
+  ┌─────────────┐
+  │   ASPECT    │
+  │   RATIO     │
+  │   (0.52)    │
+  └─────────────┘</pre>
                     </div>
                     <div class="explainer-text">
-                        <h3>3. brightness mapping</h3>
-                        <p>Each brightness level is mapped to a specific character. <span class="highlight">Dense characters</span> like <code>@</code> represent dark areas, while <span class="highlight">sparse characters</span> like <code>.</code> or spaces represent light areas.</p>
-                        <p style="color:#666666; font-size:0.7rem;">The 'standard' charset is the default, but you can choose from many others.</p>
+                        <h3>3. smart resizing &amp; aspect ratio</h3>
+                        <p>The image is resized to match your desired <span class="highlight">characters per line</span>. The height is calculated automatically to preserve the original aspect ratio.</p>
+                        <ul>
+                            <li><strong>Monospace correction:</strong> ASCII characters in monospace fonts are roughly <span class="code">0.52×</span> as wide as they are tall.</li>
+                            <li><strong>Formula:</strong> <span class="code">height = width / aspect * 0.52</span></li>
+                            <li><strong>Scale factor:</strong> Multiplies the width before conversion, giving you finer control over detail.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.75rem;">This ensures the final ASCII art doesn't look vertically stretched or compressed.</p>
                     </div>
                 </div>
 
                 <!-- Step 4 -->
                 <div class="explainer-block">
                     <div class="explainer-ascii">
-                        <pre>╔══════════════════╗
-║  @@@  @@@  @@@   ║
-║ @   @ @   @   @  ║
-║ @   @ @@@  @@@   ║
-║ @   @ @   @   @  ║
-║  @@@  @@@  @@@   ║
-╚══════════════════╝</pre>
+                        <pre>  ╔════════════════════════╗
+  ║    CONTRAST STRETCH    ║
+  ║    (value‑128) × 1.5   ║
+  ║      + 128             ║
+  ╚════════════════════════╝
+         │
+         ▼
+  ╔════════════════════════╗
+  ║    SHARPEN KERNEL      ║
+  ║    [ 0, -1,  0]        ║
+  ║    [-1,  5, -1]        ║
+  ║    [ 0, -1,  0]        ║
+  ╚════════════════════════╝</pre>
                     </div>
                     <div class="explainer-text">
-                        <h3>4. render &amp; export</h3>
-                        <p>The resulting character grid is displayed instantly in the output area. You can <span class="highlight">copy</span> it to your clipboard, or <span class="highlight">export</span> it as a PNG image, scalable SVG, or plain text file.</p>
-                        <p style="color:#666666; font-size:0.7rem;">The output is pure text — infinitely scalable and ready for any creative use.</p>
+                        <h3>4. image enhancement (contrast &amp; sharpen)</h3>
+                        <p>Optional preprocessing steps to improve the final ASCII quality:</p>
+                        <ul>
+                            <li><strong>Contrast:</strong> Pushes mid‑tone values toward black or white using <span class="code">(value - 128) × 1.5 + 128</span>. This makes dark areas darker and light areas lighter.</li>
+                            <li><strong>Sharpen:</strong> Applies a Laplacian kernel (<span class="code">[0,-1,0; -1,5,-1; 0,-1,0]</span>) to emphasize edges.</li>
+                            <li><strong>Effect:</strong> Contrast improves readability; sharpen adds crispness to fine details.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.75rem;">These are applied <em>before</em> the brightness mapping for maximum impact.</p>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>  ┌─────────────────────────────────────┐
+  │   BRIGHTNESS → CHARACTER MAPPING    │
+  │                                     │
+  │   0% (Black)  ████████████  100%    │
+  │   @ # 8 W M * o a h k b d p q w m   │
+  │   Z O 0 Q L C J U Y X z c v u n x   │
+  │   r j f t / \ | ( ) 1 { } [ ] ? -   │
+  │   _ + ~ < > i ! l I ; : " ^ ` ' .   │
+  └─────────────────────────────────────┘</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>5. brightness → character mapping</h3>
+                        <p>Every grayscale pixel value (0–255) is mapped to a character from the chosen <span class="highlight">charset</span>:</p>
+                        <ul>
+                            <li><strong>Index calculation:</strong> <span class="code">charIndex = Math.round(brightness / 255 * (charset.length - 1))</span></li>
+                            <li><strong>Dark pixels</strong> get dense characters like <code>@</code>, <code>#</code>, <code>8</code>.</li>
+                            <li><strong>Bright pixels</strong> get sparse characters like <code>.</code>, <code>'</code>, or space.</li>
+                            <li><strong>Invert:</strong> Reverses the mapping by using <span class="code">1 - brightness</span>.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.75rem;">The <span class="highlight">'vibe'</span> charset is hand‑tuned for smooth gradients and high contrast across all brightness levels.</p>
+                    </div>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="explainer-block" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="explainer-ascii">
+                        <pre>  ╔═════════════════════════════╗
+  ║   ASCII STRING              ║
+  ║   (2D array of chars)       ║
+  ╚═════════════════════════════╝
+         │
+         ├──────────────┬───────────────┐
+         ▼              ▼               ▼
+  ┌──────────┐  ┌──────────┐   ┌──────────┐
+  │  PNG     │  │  SVG     │   │  TXT     │
+  │ (canvas) │  │ (vector) │   │ (plain)  │
+  └──────────┘  └──────────┘   └──────────┘</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>6. rendering &amp; export pipeline</h3>
+                        <p>The final character grid is displayed and exported in three formats:</p>
+                        <ul>
+                            <li><strong>PNG (raster):</strong> Each character is drawn onto a canvas using a monospace font. The canvas size is calculated from the character grid dimensions and font metrics.</li>
+                            <li><strong>SVG (vector):</strong> The ASCII text is wrapped in an SVG <code>&lt;text&gt;</code> element with a monospace font, preserving resolution independence.</li>
+                            <li><strong>TXT (plain):</strong> The raw string is saved as a text file, perfect for further editing or sharing.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.75rem;">All exports use your current font selection and preprocessing settings, ensuring consistent results across formats.</p>
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <!-- ═══ NEW: SCALING EXPLAINED CARD ═══ -->
+        <!-- ═══ SCALING EXPLAINED CARD ═══ -->
         <div class="card" style="border-color:#1a1a1a;">
             <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.2rem;">
                 <span style="color:#ffffff; font-size:1.1rem;">⟡</span>
