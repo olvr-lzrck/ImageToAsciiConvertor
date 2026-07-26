@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ASCII Image to Art Converter</title>
+    <style>
+        /* ── reset & base ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #000000;
+            color: #cccccc;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 1.5rem 0.8rem;
+            line-height: 1.6;
+        }
+
+        ::selection {
+            background: #ffffff33;
+            color: #ffffff;
+        }
+
+        /* ── scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222222;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444444;
+        }
+
+        /* ── container ── */
+        .app {
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        /* ── ASCII header ── */
+        .ascii-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            user-select: none;
+        }
+
+        .ascii-header .logo {
+            display: inline-block;
+            background: #0a0a0a;
+            padding: 0.4rem 1.2rem 0.2rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid #333333;
+            transition: border-color 0.3s;
+        }
+
+        .ascii-header .logo:hover {
+            border-color: #ffffff;
+        }
+
+        .ascii-header .logo pre {
+            font-size: 0.65rem;
+            line-height: 1.1;
+            color: #ffffff;
+            letter-spacing: 0.8px;
+            white-space: pre;
+            margin: 0;
+        }
+
+        .ascii-header .subtitle {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #666666;
+            margin-top: 0.3rem;
+            font-weight: 300;
+        }
+
+        .ascii-header .subtitle span {
+            color: #ffffff;
+        }
+
+        .glow-divider {
+            border: none;
+            height: 1px;
+            background: #333333;
+            margin: 0.5rem auto 0 auto;
+            max-width: 70%;
+        }
+
+        /* ── cards ── */
+        .card {
+            background: #0a0a0a;
+            border: 1px solid #222222;
+            border-radius: 16px;
+            padding: 1.75rem;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 8px 32px #00000066;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: #444444;
+        }
+
+        /* ── upload zone ── */
+        .upload-zone {
+            border: 2px dashed #222222;
+            border-radius: 12px;
+            padding: 2.8rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s;
+            background: #050505;
+            position: relative;
+        }
+
+        .upload-zone:hover {
+            border-color: #ffffff88;
+            background: #0a0a0a;
+        }
+
+        .upload-zone.dragover {
+            border-color: #ffffff;
+            background: #111111;
+        }
+
+        .upload-zone .icon {
+            font-size: 3rem;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .upload-zone p {
+            margin: 0.2rem 0;
+            color: #888888;
+            font-size: 0.95rem;
+        }
+
+        .upload-zone .browse {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .upload-zone input[type="file"] {
+            display: none;
+        }
+
+        .upload-zone .sub {
+            font-size: 0.8rem;
+            color: #444444;
+            margin-top: 0.5rem;
+        }
+
+        /* ── preview row ── */
+        .preview-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1.75rem;
+            align-items: flex-start;
+        }
+
+        .preview-col {
+            flex: 1 1 220px;
+            min-width: 0;
+        }
+
+        .preview-col .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #555555;
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+
+        .preview-col img,
+        .preview-col canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #222222;
+            display: block;
+            background: #000000;
+            image-rendering: pixelated;
+        }
+
+        .preview-col canvas {
+            width: 100%;
+        }
+
+        /* ── controls ── */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem 2rem;
+            align-items: center;
+            margin-top: 1.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #222222;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .control-group label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888888;
+            font-weight: 500;
+        }
+
+        .control-group input[type="range"] {
+            width: 140px;
+            accent-color: #ffffff;
+            background: transparent;
+            height: 3px;
+            border-radius: 2px;
+            cursor: pointer;
+            appearance: none;
+            outline: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-runnable-track {
+            height: 3px;
+            background: #222222;
+            border-radius: 2px;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 0 20px #ffffff44;
+            margin-top: -5.5px;
+            cursor: pointer;
+            border: 2px solid #000000;
+        }
+
+        .control-group input[type="range"]::-moz-range-track {
+            height: 3px;
+            background: #222222;
+            border-radius: 2px;
+            border: none;
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 0 20px #ffffff44;
+            border: 2px solid #000000;
+            cursor: pointer;
+        }
+
+        .control-group input[type="number"] {
+            width: 60px;
+            padding: 0.2rem 0.3rem;
+            background: #000000;
+            border: 1px solid #222222;
+            border-radius: 6px;
+            color: #cccccc;
+            font-size: 0.85rem;
+            text-align: center;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .control-group input[type="number"]:focus {
+            outline: none;
+            border-color: #ffffff88;
+        }
+
+        .control-group select {
+            background: #000000;
+            border: 1px solid #222222;
+            border-radius: 6px;
+            color: #cccccc;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666666'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 28px;
+            text-transform: lowercase;
+        }
+
+        .control-group select:focus {
+            outline: none;
+            border-color: #ffffff88;
+        }
+
+        .control-group select option {
+            background: #0a0a0a;
+            color: #cccccc;
+        }
+
+        .control-group .toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .control-group .toggle-wrap input[type="checkbox"] {
+            appearance: none;
+            width: 36px;
+            height: 20px;
+            background: #222222;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+            flex-shrink: 0;
+            border: none;
+        }
+
+        .control-group .toggle-wrap input[type="checkbox"]::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: #555555;
+            border-radius: 50%;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .control-group .toggle-wrap input[type="checkbox"]:checked {
+            background: #444444;
+        }
+
+        .control-group .toggle-wrap input[type="checkbox"]:checked::after {
+            transform: translateX(16px);
+            background: #ffffff;
+        }
+
+        .control-group .toggle-wrap .toggle-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888888;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-left: auto;
+        }
+
+        .btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid #222222;
+            background: transparent;
+            color: #cccccc;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+        }
+
+        .btn:hover:not(:disabled) {
+            border-color: #666666;
+            background: #111111;
+            transform: translateY(-1px);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.25;
+            pointer-events: none;
+            filter: grayscale(0.6);
+        }
+
+        .btn-primary {
+            border-color: #ffffff66;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+
+        .btn-magenta {
+            border-color: #666666;
+            color: #cccccc;
+        }
+
+        .btn-magenta:hover:not(:disabled) {
+            background: #333333;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .btn-green {
+            border-color: #666666;
+            color: #cccccc;
+        }
+
+        .btn-green:hover:not(:disabled) {
+            background: #333333;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .btn-yellow {
+            border-color: #666666;
+            color: #cccccc;
+        }
+
+        .btn-yellow:hover:not(:disabled) {
+            background: #333333;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border-color: #222222;
+            color: #555555;
+        }
+
+        .btn-ghost:hover:not(:disabled) {
+            border-color: #666666;
+            color: #aaaaaa;
+            background: transparent;
+        }
+
+        /* ── status ── */
+        .status-msg {
+            font-size: 0.75rem;
+            margin-top: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            min-height: 2rem;
+            transition: all 0.3s;
+            color: #666666;
+            border: 1px solid transparent;
+        }
+
+        .status-msg.error {
+            color: #ff4444;
+            background: #441111;
+            border-color: #661111;
+        }
+
+        .status-msg.success {
+            color: #44ff44;
+            background: #114411;
+            border-color: #116611;
+        }
+
+        .status-msg.info {
+            color: #ffffff;
+            background: #222222;
+            border-color: #333333;
+        }
+
+        /* ── output ── */
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .output-header .title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888888;
+        }
+
+        .output-header .actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .output-header .actions .btn {
+            padding: 0.25rem 0.8rem;
+            font-size: 0.6rem;
+        }
+
+        .ascii-output {
+            background: #000000;
+            border: 1px solid #222222;
+            border-radius: 10px;
+            padding: 1.5rem;
+            overflow: auto;
+            max-height: 600px;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.25;
+            white-space: pre;
+            color: #cccccc;
+            position: relative;
+            transition: border-color 0.3s;
+        }
+
+        .ascii-output:focus-within {
+            border-color: #ffffff44;
+        }
+
+        .ascii-output .placeholder {
+            color: #333333;
+            font-style: italic;
+        }
+
+        /* ── how to use / manual ── */
+        .manual {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .manual .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            background: #050505;
+            border: 1px solid #1a1a1a;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .manual .step:hover {
+            border-color: #444444;
+            background: #0a0a0a;
+        }
+
+        .manual .step .num {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: #222222;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid #444444;
+        }
+
+        .manual .step .text {
+            font-size: 0.7rem;
+            color: #888888;
+            line-height: 1.4;
+        }
+
+        .manual .step .text strong {
+            color: #cccccc;
+            font-weight: 600;
+        }
+
+        /* ── behind the scenes ── */
+        .explainer {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .explainer-block {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 1.5rem;
+        }
+
+        .explainer-block:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .explainer-ascii {
+            flex: 0 0 auto;
+            background: #050505;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #1a1a1a;
+            font-size: 0.65rem;
+            line-height: 1.2;
+            color: #888888;
+            min-width: 140px;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .explainer-text {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .explainer-text h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .explainer-text p {
+            font-size: 0.8rem;
+            color: #999999;
+            margin-bottom: 0.2rem;
+        }
+
+        .explainer-text .highlight {
+            color: #ffffff;
+            background: #222222;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        /* ── responsive ── */
+        @media (max-width: 760px) {
+            body {
+                padding: 1rem 0.4rem;
+            }
+            .card {
+                padding: 1rem;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+            .btn-group {
+                margin-left: 0;
+                justify-content: center;
+            }
+            .control-group {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .control-group input[type="range"] {
+                width: 100px;
+            }
+            .preview-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .ascii-header .logo pre {
+                font-size: 0.45rem;
+            }
+            .ascii-output {
+                font-size: 10px;
+                max-height: 350px;
+                padding: 0.8rem;
+            }
+            .manual {
+                grid-template-columns: 1fr 1fr;
+            }
+            .explainer-block {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .explainer-ascii {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .manual {
+                grid-template-columns: 1fr;
+            }
+            .ascii-header .logo pre {
+                font-size: 0.35rem;
+            }
+            .upload-zone {
+                padding: 1.5rem 0.8rem;
+            }
+            .upload-zone .icon {
+                font-size: 2rem;
+            }
+            .ascii-header .logo {
+                padding: 0.3rem 0.6rem 0.1rem 0.6rem;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            background: #222222;
+            color: #ffffff;
+            border: 1px solid #444444;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.6rem;
+            color: #333333;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+        .footer-note span {
+            color: #555555;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+
+        <!-- ═══ HEADER with "ASCII" logo ═══ -->
+        <header class="ascii-header">
+            <div class="logo">
+                <pre>
+     █████╗ ███████╗ ██████╗██╗██╗
+    ██╔══██╗██╔════╝██╔════╝██║██║
+    ███████║███████╗██║     ██║██║
+    ██╔══██║╚════██║██║     ██║██║
+    ██║  ██║███████║╚██████╗██║██║
+    ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝
+                </pre>
+            </div>
+            <div class="subtitle">✦ <span>image</span> to <span>art</span> converter ✦</div>
+            <div class="glow-divider"></div>
+        </header>
+
+        <!-- ═══ UPLOAD CARD ═══ -->
+        <div class="card">
+            <div class="upload-zone" id="dropZone">
+                <div class="icon">⬡</div>
+                <p><span class="browse">⟳ click to browse</span>  or  drag &amp; drop an image</p>
+                <p class="sub">JPG · PNG · WebP · BMP · GIF</p>
+                <input type="file" id="fileInput" accept="image/*" />
+            </div>
+
+            <!-- preview row -->
+            <div class="preview-row" id="previewRow" style="display:none;">
+                <div class="preview-col">
+                    <span class="label">⟡ original</span>
+                    <img id="originalPreview" alt="original" />
+                </div>
+                <div class="preview-col">
+                    <span class="label">⟡ grayscale</span>
+                    <canvas id="grayCanvas"></canvas>
+                </div>
+            </div>
+
+            <!-- controls -->
+            <div class="controls" id="controlsRow" style="display:none;">
+                <div class="control-group">
+                    <label for="widthSlider">chars / line</label>
+                    <input type="range" id="widthSlider" min="12" max="320" value="80" step="1" />
+                    <input type="number" id="widthNumber" min="8" max="500" value="80" step="1" />
+                </div>
+
+                <div class="control-group">
+                    <label for="charSet">charset</label>
+                    <select id="charSet">
+                        <option value="vibe" selected>vibe</option>
+                        <option value="standard">standard</option>
+                        <option value="blocks">blocks</option>
+                        <option value="detailed">detailed</option>
+                        <option value="simple">simple</option>
+                        <option value="cyber">cyber</option>
+                        <option value="wave">wave</option>
+                        <option value="braille">braille</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <div class="toggle-wrap" id="invertToggle">
+                        <input type="checkbox" id="invertCheck" />
+                        <span class="toggle-label">invert</span>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="generateBtn" disabled>⚡ generate</button>
+                    <button class="btn btn-magenta" id="downloadPngBtn" disabled>⬇ png</button>
+                    <button class="btn btn-yellow" id="downloadSvgBtn" disabled>⬇ svg</button>
+                    <button class="btn btn-green" id="downloadTxtBtn" disabled>⬇ txt</button>
+                </div>
+            </div>
+
+            <div id="statusMsg" class="status-msg">⟡ upload an image to begin</div>
+        </div>
+
+        <!-- ═══ OUTPUT CARD ═══ -->
+        <div class="card" id="outputCard" style="display:none;">
+            <div class="output-header">
+                <span class="title">⟡ ascii output</span>
+                <div class="actions">
+                    <button class="btn btn-ghost" id="copyBtn">⎘ copy</button>
+                    <button class="btn btn-ghost" id="clearBtn">✕ clear</button>
+                </div>
+            </div>
+            <div class="ascii-output" id="asciiOutput"><span class="placeholder">⟡ generate art to see it here</span></div>
+        </div>
+
+        <!-- ═══ MANUAL CARD ═══ -->
+        <div class="card" style="border-color:#1a1a1a;">
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.6rem;">
+                <span style="color:#ffffff; font-size:1.1rem;">⎔</span>
+                <span style="font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; color:#888888;">how to use</span>
+                <span style="flex:1; border-bottom:1px solid #1a1a1a;"></span>
+                <span class="badge">vibe</span>
+            </div>
+            <div class="manual">
+                <div class="step"><span class="num">1</span><span class="text"><strong>Upload</strong> — click or drag an image.</span></div>
+                <div class="step"><span class="num">2</span><span class="text"><strong>Adjust</strong> — set chars/line &amp; pick a charset.</span></div>
+                <div class="step"><span class="num">3</span><span class="text"><strong>Generate</strong> — press ⚡ and watch the art appear.</span></div>
+                <div class="step"><span class="num">4</span><span class="text"><strong>Export</strong> — download as PNG, SVG, or TXT.</span></div>
+                <div class="step"><span class="num">5</span><span class="text"><strong>Invert</strong> — toggle to reverse brightness.</span></div>
+                <div class="step"><span class="num">6</span><span class="text"><strong>Copy</strong> — grab the art to your clipboard.</span></div>
+            </div>
+            <div class="footer-note">⚡ preserves aspect ratio · <span>ASCII Image to Art Converter</span></div>
+        </div>
+
+        <!-- ═══ BEHIND THE SCENES CARD ═══ -->
+        <div class="card" style="border-color:#1a1a1a;">
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.2rem;">
+                <span style="color:#ffffff; font-size:1.1rem;">⎇</span>
+                <span style="font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; color:#888888;">behind the scenes</span>
+                <span style="flex:1; border-bottom:1px solid #1a1a1a;"></span>
+                <span class="badge">how it works</span>
+            </div>
+
+            <div class="explainer">
+
+                <!-- Step 1 -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>   _________
+  /         \
+ |  [IMAGE]  |
+  \_________/
+       |
+       v
+  +-------+
+  | PIXEL |
+  | DATA  |
+  +-------+</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>1. upload &amp; decode</h3>
+                        <p>Your image is read pixel by pixel. Each pixel's RGB values are combined into a single <span class="highlight">brightness value</span> (0 = black, 255 = white).</p>
+                        <p style="color:#666666; font-size:0.7rem;">This grayscale conversion is the foundation of the entire process.</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>+---+---+---+
+| 0 | 1 | 0 |
++---+---+---+
+| 1 | 0 | 1 |
++---+---+---+
+| 0 | 1 | 0 |
++---+---+---+
+
+  width: 80 chars
+  height: auto</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>2. resize &amp; preserve ratio</h3>
+                        <p>The image is resized to match your desired <span class="highlight">characters per line</span>. The height is calculated automatically to preserve the original aspect ratio.</p>
+                        <p style="color:#666666; font-size:0.7rem;">A special correction factor accounts for the shape of monospace characters (they're taller than they are wide).</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>DARK  ■■■■■■■■■■  LIGHT
+
+@ # 8 W M * o a h k b d p q w m
+Z O 0 Q L C J U Y X z c v u n x
+r j f t / \ | ( ) 1 { } [ ] ? -
+_ + ~ < > i ! l I ; : " ^ ` ' .</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>3. brightness mapping</h3>
+                        <p>Each brightness level is mapped to a specific character. <span class="highlight">Dense characters</span> like <code>@</code> represent dark areas, while <span class="highlight">sparse characters</span> like <code>.</code> or spaces represent light areas.</p>
+                        <p style="color:#666666; font-size:0.7rem;">The 'vibe' charset is carefully tuned for smooth gradients and high contrast.</p>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>╔══════════════════╗
+║  @@@  @@@  @@@   ║
+║ @   @ @   @   @  ║
+║ @   @ @@@  @@@   ║
+║ @   @ @   @   @  ║
+║  @@@  @@@  @@@   ║
+╚══════════════════╝</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>4. render &amp; export</h3>
+                        <p>The resulting character grid is displayed instantly in the output area. You can <span class="highlight">copy</span> it to your clipboard, or <span class="highlight">export</span> it as a PNG image, scalable SVG, or plain text file.</p>
+                        <p style="color:#666666; font-size:0.7rem;">The output is pure text — infinitely scalable and ready for any creative use.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── DOM refs ──────────────────────────────────────────────
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const originalPreview = document.getElementById('originalPreview');
+            const grayCanvas = document.getElementById('grayCanvas');
+            const previewRow = document.getElementById('previewRow');
+            const controlsRow = document.getElementById('controlsRow');
+            const outputCard = document.getElementById('outputCard');
+            const asciiOutput = document.getElementById('asciiOutput');
+            const statusMsg = document.getElementById('statusMsg');
+
+            const widthSlider = document.getElementById('widthSlider');
+            const widthNumber = document.getElementById('widthNumber');
+            const charSetSelect = document.getElementById('charSet');
+            const invertCheck = document.getElementById('invertCheck');
+            const generateBtn = document.getElementById('generateBtn');
+            const downloadPngBtn = document.getElementById('downloadPngBtn');
+            const downloadSvgBtn = document.getElementById('downloadSvgBtn');
+            const downloadTxtBtn = document.getElementById('downloadTxtBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            // ─── state ──────────────────────────────────────────────────
+            let currentImageFile = null;
+            let currentAsciiString = '';
+            let currentAsciiWidth = 80;
+            let currentCharset = 'vibe';
+            let currentInvert = false;
+            let originalImage = null;
+
+            // ─── charsets ──────────────────────────────────────────────
+            // "vibe" — meticulously tuned from the example: dark → light
+            const CHARSETS = {
+                vibe: [
+                    '@', '$', '%', '&', '#', 'B', '8', 'W', 'M', '*',
+                    'o', 'a', 'h', 'k', 'b', 'd', 'p', 'q', 'w', 'm',
+                    'Z', 'O', '0', 'Q', 'L', 'C', 'J', 'U', 'Y', 'X',
+                    'z', 'c', 'v', 'u', 'n', 'x', 'r', 'j', 'f', 't',
+                    '/', '\\', '|', '(', ')', '1', '{', '}', '[', ']',
+                    '?', '-', '_', '+', '~', '<', '>', 'i', '!', 'l',
+                    'I', ';', ':', '"', '^', '`', '\'', '.', ' '
+                ],
+                standard: ['@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.', ' '],
+                blocks: ['█', '▓', '▒', '░', ' '],
+                detailed: ['$', '@', 'B', '%', '8', '&', 'W', 'M', '#', '*', 'o', 'a', 'h', 'k', 'b', 'd', 'p', 'q', 'w',
+                    'm', 'Z', 'O', '0', 'Q', 'L', 'C', 'J', 'U', 'Y', 'X', 'z', 'c', 'v', 'u', 'n', 'x', 'r', 'j', 'f',
+                    't', '/', '\\', '|', '(', ')', '1', '{', '}', '[', ']', '?', '-', '_', '+', '~', '<', '>', 'i', '!',
+                    'l', 'I', ';', ':', '"', '^', '`', '\'', '.', ' '
+                ],
+                simple: ['#', '=', '-', ':', '.', ' '],
+                cyber: ['█', '▓', '▒', '♦', '♣', '♠', '♥', '○', '●', '◐', '◑', '◒', '◓', ' '],
+                wave: ['~', '≈', '≥', '≤', '∞', '∝', '∫', '√', '∂', '∆', ' '],
+                braille: ['⠿', '⠾', '⠽', '⠼', '⠻', '⠺', '⠹', '⠸', '⠷', '⠶', '⠵', '⠴', '⠳', '⠲', '⠱', '⠰', '⠯', '⠮', '⠭', '⠬',
+                    '⠫', '⠪', '⠩', '⠨', '⠧', '⠦', '⠥', '⠤', '⠣', '⠢', '⠡', '⠠', '⠟', '⠞', '⠝', '⠜', '⠛', '⠚', '⠙', '⠘',
+                    '⠗', '⠖', '⠕', '⠔', '⠓', '⠒', '⠑', '⠐', '⠏', '⠎', '⠍', '⠌', '⠋', '⠊', '⠉', '⠈', '⠇', '⠆', '⠅', '⠄',
+                    '⠃', '⠂', '⠁', ' '
+                ]
+            };
+
+            // ─── helpers ───────────────────────────────────────────────
+            function setStatus(msg, type) {
+                statusMsg.textContent = msg;
+                statusMsg.className = 'status-msg' + (type ? ' ' + type : '');
+            }
+
+            function showError(msg) { setStatus('✖ ' + msg, 'error'); }
+
+            function showSuccess(msg) { setStatus('✔ ' + msg, 'success'); }
+
+            function showInfo(msg) { setStatus('⟡ ' + msg, 'info'); }
+
+            // ─── image loading ─────────────────────────────────────────
+            function loadImageFile(file) {
+                if (!file || !file.type.startsWith('image/')) {
+                    showError('Please select a valid image file.');
+                    return;
+                }
+                currentImageFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        originalImage = img;
+                        originalPreview.src = e.target.result;
+                        previewRow.style.display = 'flex';
+                        controlsRow.style.display = 'flex';
+                        renderGrayscalePreview(img);
+                        generateBtn.disabled = false;
+                        showSuccess('Image loaded — adjust width & generate!');
+                    };
+                    img.onerror = function() { showError('Failed to decode image.'); };
+                    img.src = e.target.result;
+                };
+                reader.onerror = function() { showError('Failed to read file.'); };
+                reader.readAsDataURL(file);
+            }
+
+            function renderGrayscalePreview(img) {
+                const maxDim = 280;
+                let w = img.width,
+                    h = img.height;
+                if (w > h) { if (w > maxDim) { h = Math.round(h * maxDim / w);
+                        w = maxDim; } } else { if (h > maxDim) { w = Math.round(w * maxDim / h);
+                        h = maxDim; } }
+                grayCanvas.width = w;
+                grayCanvas.height = h;
+                const ctx = grayCanvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+                const imageData = ctx.getImageData(0, 0, w, h);
+                const data = imageData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+                    data[i] = gray;
+                    data[i + 1] = gray;
+                    data[i + 2] = gray;
+                }
+                ctx.putImageData(imageData, 0, 0);
+            }
+
+            // ─── ASCII conversion (preserves aspect ratio) ───────────
+            function imageToAscii(img, targetWidth, charsetName, invert) {
+                const charset = CHARSETS[charsetName] || CHARSETS.vibe;
+                const aspect = img.width / img.height;
+                // monospace chars are roughly 0.5× wide as tall
+                const charAspect = 0.52;
+                const targetHeight = Math.max(1, Math.round(targetWidth / aspect * charAspect));
+
+                const canvas = document.createElement('canvas');
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                const imageData = ctx.getImageData(0, 0, targetWidth, targetHeight);
+                const data = imageData.data;
+                const total = targetWidth * targetHeight;
+                const gray = new Uint8Array(total);
+
+                for (let i = 0; i < total; i++) {
+                    const idx = i * 4;
+                    gray[i] = Math.round(0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2]);
+                }
+
+                const lines = [];
+                const len = charset.length;
+                for (let y = 0; y < targetHeight; y++) {
+                    let line = '';
+                    for (let x = 0; x < targetWidth; x++) {
+                        const idx = y * targetWidth + x;
+                        let val = gray[idx] / 255;
+                        if (invert) val = 1 - val;
+                        // clamp
+                        if (val < 0) val = 0;
+                        if (val > 1) val = 1;
+                        const charIdx = Math.round(val * (len - 1));
+                        line += charset[Math.min(charIdx, len - 1)];
+                    }
+                    lines.push(line);
+                }
+                return {
+                    ascii: lines.join('\n'),
+                    width: targetWidth,
+                    height: targetHeight
+                };
+            }
+
+            // ─── generate ──────────────────────────────────────────────
+            function generateAscii() {
+                if (!currentImageFile || !originalImage) {
+                    showError('Please upload an image first.');
+                    return;
+                }
+
+                const width = parseInt(widthNumber.value, 10);
+                if (isNaN(width) || width < 4) {
+                    showError('Width must be at least 4.');
+                    return;
+                }
+                currentAsciiWidth = width;
+                currentCharset = charSetSelect.value;
+                currentInvert = invertCheck.checked;
+
+                try {
+                    const result = imageToAscii(originalImage, width, currentCharset, currentInvert);
+                    currentAsciiString = result.ascii;
+                    asciiOutput.textContent = currentAsciiString;
+                    outputCard.style.display = 'block';
+                    downloadPngBtn.disabled = false;
+                    downloadSvgBtn.disabled = false;
+                    downloadTxtBtn.disabled = false;
+                    const lines = currentAsciiString.split('\n').length;
+                    showSuccess(`Generated ${result.width}×${result.height} · ${lines} lines · charset: ${currentCharset}`);
+                } catch (err) {
+                    showError('Generation error: ' + err.message);
+                }
+            }
+
+            // ─── downloads ─────────────────────────────────────────────
+            function downloadPng() {
+                if (!currentAsciiString) { showError('No art to download.'); return; }
+                try {
+                    const lines = currentAsciiString.split('\n');
+                    const fontSize = 14;
+                    const charW = fontSize * 0.6;
+                    const lineH = fontSize * 1.25;
+                    const maxLen = Math.max(...lines.map(l => l.length));
+                    const pad = 32;
+                    const cw = maxLen * charW + pad * 2;
+                    const ch = lines.length * lineH + pad * 2;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.ceil(cw);
+                    canvas.height = Math.ceil(ch);
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.font = `${fontSize}px 'Courier New', monospace`;
+                    ctx.textBaseline = 'top';
+                    ctx.fillStyle = '#cccccc';
+                    for (let i = 0; i < lines.length; i++) {
+                        ctx.fillText(lines[i], pad, pad + i * lineH);
+                    }
+                    const link = document.createElement('a');
+                    link.download = 'ascii-art.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    showSuccess('PNG downloaded.');
+                } catch (e) { showError('PNG error: ' + e.message); }
+            }
+
+            function downloadSvg() {
+                if (!currentAsciiString) { showError('No art to download.'); return; }
+                try {
+                    const lines = currentAsciiString.split('\n');
+                    const fontSize = 14;
+                    const charW = fontSize * 0.6;
+                    const lineH = fontSize * 1.25;
+                    const maxLen = Math.max(...lines.map(l => l.length));
+                    const pad = 32;
+                    const sw = maxLen * charW + pad * 2;
+                    const sh = lines.length * lineH + pad * 2;
+                    let svg =
+                        `<svg xmlns="http://www.w3.org/2000/svg" width="${sw}" height="${sh}" viewBox="0 0 ${sw} ${sh}">
+              <rect width="100%" height="100%" fill="#000000"/>
+              <g font-family="'Courier New',monospace" font-size="${fontSize}" fill="#cccccc" dominant-baseline="hanging">`;
+                    for (let i = 0; i < lines.length; i++) {
+                        const escaped = lines[i].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                        svg += `<text x="${pad}" y="${pad + i * lineH}">${escaped}</text>`;
+                    }
+                    svg += `</g></svg>`;
+                    const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = 'ascii-art.svg';
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    showSuccess('SVG downloaded.');
+                } catch (e) { showError('SVG error: ' + e.message); }
+            }
+
+            function downloadTxt() {
+                if (!currentAsciiString) { showError('No art to download.'); return; }
+                try {
+                    const blob = new Blob([currentAsciiString], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = 'ascii-art.txt';
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    showSuccess('TXT downloaded.');
+                } catch (e) { showError('TXT error: ' + e.message); }
+            }
+
+            // ─── copy & clear ──────────────────────────────────────────
+            function copyAscii() {
+                if (!currentAsciiString) { showError('No art to copy.'); return; }
+                navigator.clipboard.writeText(currentAsciiString).then(() => {
+                    showSuccess('Copied to clipboard!');
+                }).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = currentAsciiString;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    showSuccess('Copied!');
+                });
+            }
+
+            function clearAll() {
+                currentImageFile = null;
+                originalImage = null;
+                currentAsciiString = '';
+                originalPreview.src = '';
+                grayCanvas.width = 0;
+                grayCanvas.height = 0;
+                previewRow.style.display = 'none';
+                controlsRow.style.display = 'none';
+                outputCard.style.display = 'none';
+                asciiOutput.innerHTML = '<span class="placeholder">⟡ generate art to see it here</span>';
+                downloadPngBtn.disabled = true;
+                downloadSvgBtn.disabled = true;
+                downloadTxtBtn.disabled = true;
+                generateBtn.disabled = true;
+                fileInput.value = '';
+                setStatus('⟡ upload an image to begin', '');
+                currentAsciiWidth = 80;
+            }
+
+            // ─── sync slider + number ─────────────────────────────────
+            widthSlider.addEventListener('input', function() {
+                widthNumber.value = this.value;
+            });
+            widthNumber.addEventListener('input', function() {
+                let v = parseInt(this.value, 10);
+                if (isNaN(v)) return;
+                if (v < 4) v = 4;
+                if (v > 500) v = 500;
+                widthSlider.value = v;
+            });
+
+            // ─── events ────────────────────────────────────────────────
+            dropZone.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') fileInput.click();
+            });
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length) loadImageFile(e.dataTransfer.files[0]);
+            });
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length) loadImageFile(this.files[0]);
+            });
+
+            generateBtn.addEventListener('click', generateAscii);
+            downloadPngBtn.addEventListener('click', downloadPng);
+            downloadSvgBtn.addEventListener('click', downloadSvg);
+            downloadTxtBtn.addEventListener('click', downloadTxt);
+            copyBtn.addEventListener('click', copyAscii);
+            clearBtn.addEventListener('click', clearAll);
+
+            // keyboard shortcut: Ctrl+Enter
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    generateBtn.click();
+                }
+            });
+
+            // ─── init ──────────────────────────────────────────────────
+            clearAll();
+
+            // expose for debugging
+            window.__asciiGen = { generateAscii, downloadPng, downloadSvg, downloadTxt, clearAll };
+
+        })();
+    </script>
+
+</body>
+</html>
