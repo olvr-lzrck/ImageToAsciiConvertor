@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ASCII Video to Art Converter</title>
 
-    <!-- ── Google Fonts for Fira Code, JetBrains Mono, Source Code Pro ── -->
+    <!-- ── Google Fonts ── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
@@ -36,7 +36,6 @@
             color: #ffffff;
         }
 
-        /* ── scrollbar ── */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -52,7 +51,6 @@
             background: #444444;
         }
 
-        /* ── container ── */
         .app {
             max-width: 1200px;
             width: 100%;
@@ -73,11 +71,9 @@
             border: 1px solid #444444;
             transition: border-color 0.3s;
         }
-
         .ascii-header .logo:hover {
             border-color: #ffffff;
         }
-
         .ascii-header .logo pre {
             font-size: 1.2rem;
             line-height: 1.1;
@@ -87,7 +83,6 @@
             margin: 0;
             text-shadow: 0 0 30px #ffffff22;
         }
-
         .ascii-header .subtitle {
             font-size: 0.9rem;
             letter-spacing: 4px;
@@ -96,12 +91,10 @@
             margin-top: 0.5rem;
             font-weight: 300;
         }
-
         .ascii-header .subtitle span {
             color: #ffffff;
             text-shadow: 0 0 20px #ffffff44;
         }
-
         .glow-divider {
             border: none;
             height: 2px;
@@ -120,7 +113,6 @@
             box-shadow: 0 8px 32px #00000066;
             transition: border-color 0.3s;
         }
-
         .card:hover {
             border-color: #444444;
         }
@@ -136,53 +128,45 @@
             background: #050505;
             position: relative;
         }
-
         .upload-zone:hover {
             border-color: #ffffff88;
             background: #0a0a0a;
         }
-
         .upload-zone.dragover {
             border-color: #ffffff;
             background: #111111;
         }
-
         .upload-zone .icon {
             font-size: 4rem;
             line-height: 1;
             margin-bottom: 0.5rem;
             color: #ffffff;
         }
-
         .upload-zone p {
             margin: 0.2rem 0;
             color: #888888;
             font-size: 1rem;
         }
-
         .upload-zone .browse {
             color: #ffffff;
             font-weight: 600;
         }
-
         .upload-zone input[type="file"] {
             display: none;
         }
-
         .upload-zone .sub {
             font-size: 0.8rem;
             color: #555555;
             margin-top: 0.5rem;
         }
 
-        /* ── video player area ── */
+        /* ── video player ── */
         .video-container {
             margin-top: 1.5rem;
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
-
         .video-container video {
             max-width: 100%;
             max-height: 450px;
@@ -190,19 +174,16 @@
             border: 1px solid #222222;
             background: #000000;
         }
-
         .video-controls {
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
             align-items: center;
         }
-
         .video-controls .btn {
             padding: 0.4rem 1.2rem;
             font-size: 0.7rem;
         }
-
         .video-controls input[type="range"] {
             flex: 1;
             min-width: 100px;
@@ -211,7 +192,6 @@
             height: 4px;
             cursor: pointer;
         }
-
         .video-controls .time-display {
             font-size: 0.75rem;
             color: #888888;
@@ -229,14 +209,12 @@
             padding-top: 1.5rem;
             border-top: 1px solid #222222;
         }
-
         .control-group {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             flex-wrap: wrap;
         }
-
         .control-group label {
             font-size: 0.7rem;
             text-transform: uppercase;
@@ -255,13 +233,11 @@
             appearance: none;
             outline: none;
         }
-
         .control-group input[type="range"]::-webkit-slider-runnable-track {
             height: 3px;
             background: #222222;
             border-radius: 2px;
         }
-
         .control-group input[type="range"]::-webkit-slider-thumb {
             appearance: none;
             width: 14px;
@@ -273,14 +249,12 @@
             cursor: pointer;
             border: 2px solid #000000;
         }
-
         .control-group input[type="range"]::-moz-range-track {
             height: 3px;
             background: #222222;
             border-radius: 2px;
             border: none;
         }
-
         .control-group input[type="range"]::-moz-range-thumb {
             width: 14px;
             height: 14px;
@@ -292,7 +266,7 @@
         }
 
         .control-group input[type="number"] {
-            width: 60px;
+            width: 70px;
             padding: 0.2rem 0.3rem;
             background: #000000;
             border: 1px solid #222222;
@@ -303,7 +277,6 @@
             font-family: inherit;
             transition: border-color 0.3s;
         }
-
         .control-group input[type="number"]:focus {
             outline: none;
             border-color: #ffffff88;
@@ -327,12 +300,10 @@
             text-transform: lowercase;
             max-width: 150px;
         }
-
         .control-group select:focus {
             outline: none;
             border-color: #ffffff88;
         }
-
         .control-group select option {
             background: #0a0a0a;
             color: #cccccc;
@@ -345,7 +316,6 @@
             cursor: pointer;
             user-select: none;
         }
-
         .control-group .toggle-wrap input[type="checkbox"] {
             appearance: none;
             width: 36px;
@@ -358,7 +328,6 @@
             flex-shrink: 0;
             border: none;
         }
-
         .control-group .toggle-wrap input[type="checkbox"]::after {
             content: '';
             position: absolute;
@@ -370,16 +339,13 @@
             border-radius: 50%;
             transition: transform 0.3s, background 0.3s;
         }
-
         .control-group .toggle-wrap input[type="checkbox"]:checked {
             background: #444444;
         }
-
         .control-group .toggle-wrap input[type="checkbox"]:checked::after {
             transform: translateX(16px);
             background: #ffffff;
         }
-
         .control-group .toggle-wrap .toggle-label {
             font-size: 0.7rem;
             text-transform: uppercase;
@@ -412,17 +378,14 @@
             gap: 0.4rem;
             text-decoration: none;
         }
-
         .btn:hover:not(:disabled) {
             border-color: #666666;
             background: #111111;
             transform: translateY(-1px);
         }
-
         .btn:active:not(:disabled) {
             transform: translateY(0);
         }
-
         .btn:disabled {
             opacity: 0.25;
             pointer-events: none;
@@ -433,7 +396,6 @@
             border-color: #ffffff66;
             color: #ffffff;
         }
-
         .btn-primary:hover:not(:disabled) {
             background: #ffffff;
             color: #000000;
@@ -444,7 +406,6 @@
             border-color: #666666;
             color: #cccccc;
         }
-
         .btn-magenta:hover:not(:disabled) {
             background: #333333;
             border-color: #ffffff;
@@ -455,7 +416,6 @@
             border-color: #666666;
             color: #cccccc;
         }
-
         .btn-green:hover:not(:disabled) {
             background: #333333;
             border-color: #ffffff;
@@ -466,7 +426,6 @@
             border-color: #666666;
             color: #cccccc;
         }
-
         .btn-yellow:hover:not(:disabled) {
             background: #333333;
             border-color: #ffffff;
@@ -478,7 +437,6 @@
             border-color: #222222;
             color: #555555;
         }
-
         .btn-ghost:hover:not(:disabled) {
             border-color: #666666;
             color: #aaaaaa;
@@ -489,13 +447,11 @@
             border-color: #ff444466;
             color: #ff4444;
         }
-
         .btn-red:hover:not(:disabled) {
             background: #ff444422;
             border-color: #ff4444;
             color: #ff4444;
         }
-
         .btn-red.active {
             background: #ff444422;
             border-color: #ff4444;
@@ -524,23 +480,56 @@
             color: #666666;
             border: 1px solid transparent;
         }
-
         .status-msg.error {
             color: #ff4444;
             background: #441111;
             border-color: #661111;
         }
-
         .status-msg.success {
             color: #44ff44;
             background: #114411;
             border-color: #116611;
         }
-
         .status-msg.info {
             color: #ffffff;
             background: #222222;
             border-color: #333333;
+        }
+        .status-msg.warning {
+            color: #ffaa44;
+            background: #442211;
+            border-color: #664411;
+        }
+
+        /* ── progress bar ── */
+        .progress-container {
+            display: none;
+            margin-top: 0.75rem;
+            padding: 0.5rem 0;
+        }
+        .progress-container.active {
+            display: block;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #222222;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            background: #44ff44;
+            border-radius: 2px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+        .progress-text {
+            font-size: 0.7rem;
+            color: #888888;
+            margin-top: 0.3rem;
+            text-align: center;
         }
 
         /* ── output ── */
@@ -552,20 +541,17 @@
             gap: 0.5rem;
             margin-bottom: 0.75rem;
         }
-
         .output-header .title {
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #888888;
         }
-
         .output-header .actions {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
-
         .output-header .actions .btn {
             padding: 0.25rem 0.8rem;
             font-size: 0.6rem;
@@ -581,7 +567,6 @@
             min-height: 120px;
             transition: max-height 0.3s;
         }
-
         .ascii-output {
             padding: 1rem;
             font-family: 'Courier New', 'Fira Code', monospace;
@@ -591,20 +576,32 @@
             color: #cccccc;
             transition: font-size 0.2s;
         }
-
         .ascii-output .placeholder {
             color: #333333;
             font-style: italic;
         }
 
-        /* ── how to use / manual ── */
+        .max-width-warning {
+            display: none;
+            color: #ffaa44;
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            background: #442211;
+            border-radius: 4px;
+            border: 1px solid #664411;
+        }
+        .max-width-warning.active {
+            display: block;
+        }
+
+        /* ── manual ── */
         .manual {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 0.75rem;
             margin-top: 0.5rem;
         }
-
         .manual .step {
             display: flex;
             align-items: flex-start;
@@ -615,12 +612,10 @@
             border: 1px solid #1a1a1a;
             transition: border-color 0.3s, background 0.3s;
         }
-
         .manual .step:hover {
             border-color: #444444;
             background: #0a0a0a;
         }
-
         .manual .step .num {
             font-size: 0.6rem;
             font-weight: 700;
@@ -635,13 +630,11 @@
             flex-shrink: 0;
             border: 1px solid #444444;
         }
-
         .manual .step .text {
             font-size: 0.7rem;
             color: #888888;
             line-height: 1.4;
         }
-
         .manual .step .text strong {
             color: #cccccc;
             font-weight: 600;
@@ -653,7 +646,6 @@
             flex-direction: column;
             gap: 2.5rem;
         }
-
         .explainer-block {
             display: flex;
             flex-wrap: wrap;
@@ -662,12 +654,10 @@
             border-bottom: 1px solid #1a1a1a;
             padding-bottom: 2rem;
         }
-
         .explainer-block:last-child {
             border-bottom: none;
             padding-bottom: 0;
         }
-
         .explainer-ascii {
             flex: 0 0 auto;
             background: #050505;
@@ -682,12 +672,10 @@
             white-space: pre;
             overflow-x: auto;
         }
-
         .explainer-text {
             flex: 1;
             min-width: 250px;
         }
-
         .explainer-text h3 {
             font-size: 1rem;
             text-transform: uppercase;
@@ -697,14 +685,12 @@
             border-bottom: 1px solid #333333;
             padding-bottom: 0.3rem;
         }
-
         .explainer-text p {
             font-size: 0.9rem;
             color: #bbbbbb;
             margin-bottom: 0.5rem;
             line-height: 1.7;
         }
-
         .explainer-text .highlight {
             color: #ffffff;
             background: #222222;
@@ -712,7 +698,6 @@
             border-radius: 4px;
             font-family: inherit;
         }
-
         .explainer-text .code {
             display: inline-block;
             background: #111111;
@@ -723,17 +708,14 @@
             border: 1px solid #2a2a2a;
             font-family: inherit;
         }
-
         .explainer-text ul {
             list-style: none;
             padding-left: 1rem;
         }
-
         .explainer-text ul li::before {
             content: "▸ ";
             color: #888888;
         }
-
         .explainer-text ul li {
             font-size: 0.85rem;
             color: #aaaaaa;
@@ -790,7 +772,6 @@
                 max-height: 50vh;
             }
         }
-
         @media (max-width: 480px) {
             .manual {
                 grid-template-columns: 1fr;
@@ -829,7 +810,6 @@
             color: #ffffff;
             border: 1px solid #444444;
         }
-
         .footer-note {
             text-align: center;
             font-size: 0.7rem;
@@ -840,33 +820,12 @@
         .footer-note span {
             color: #555555;
         }
-
-        /* ── recording indicator ── */
-        .recording-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ff4444;
-            margin-right: 6px;
-            animation: blink 0.8s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.2;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="app">
 
-        <!-- ═══ HEADER with HUGE ASCII logo ═══ -->
+        <!-- ═══ HEADER ═══ -->
         <header class="ascii-header">
             <div class="logo">
                 <pre>
@@ -882,7 +841,7 @@
             <div class="glow-divider"></div>
         </header>
 
-        <!-- ═══ UPLOAD & PLAYER CARD ═══ -->
+        <!-- ═══ UPLOAD & PLAYER ═══ -->
         <div class="card">
             <div class="upload-zone" id="dropZone">
                 <div class="icon">▶</div>
@@ -898,8 +857,7 @@
                     <button class="btn" id="playPauseBtn">⏸ pause</button>
                     <input type="range" id="seekSlider" min="0" max="100" value="0" />
                     <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
-                    <button class="btn btn-magenta" id="captureBtn">⏺ capture</button>
-                    <button class="btn btn-red" id="recordBtn">● record</button>
+                    <button class="btn btn-magenta" id="captureBtn">⏺ frame</button>
                 </div>
             </div>
 
@@ -909,6 +867,7 @@
                     <label for="widthSlider">chars / line</label>
                     <input type="range" id="widthSlider" min="12" max="320" value="80" step="1" />
                     <input type="number" id="widthNumber" min="8" max="500" value="80" step="1" />
+                    <span id="widthWarning" class="max-width-warning">⚠️ For video export, max 160 chars/line (prevents corruption)</span>
                 </div>
 
                 <div class="control-group">
@@ -974,13 +933,22 @@
                     <button class="btn btn-magenta" id="downloadPngBtn" disabled>⬇ png</button>
                     <button class="btn btn-yellow" id="downloadSvgBtn" disabled>⬇ svg</button>
                     <button class="btn btn-green" id="downloadTxtBtn" disabled>⬇ txt</button>
+                    <button class="btn btn-red" id="downloadVideoBtn" disabled>⬇ video</button>
                 </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Processing...</div>
             </div>
 
             <div id="statusMsg" class="status-msg">⟡ upload a video to begin</div>
         </div>
 
-        <!-- ═══ OUTPUT CARD ═══ -->
+        <!-- ═══ OUTPUT ═══ -->
         <div class="card" id="outputCard" style="display:none;">
             <div class="output-header">
                 <span class="title">⟡ ascii output <span id="outputInfo" style="color:#555555;font-weight:300;"></span></span>
@@ -994,7 +962,7 @@
             </div>
         </div>
 
-        <!-- ═══ MANUAL CARD ═══ -->
+        <!-- ═══ MANUAL ═══ -->
         <div class="card" style="border-color:#1a1a1a;">
             <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.6rem;">
                 <span style="color:#ffffff; font-size:1.2rem;">⎔</span>
@@ -1007,13 +975,13 @@
                 <div class="step"><span class="num">2</span><span class="text"><strong>Play</strong> — use the controls to play/pause and seek.</span></div>
                 <div class="step"><span class="num">3</span><span class="text"><strong>Adjust</strong> — set chars/line, charset, font, scale, etc.</span></div>
                 <div class="step"><span class="num">4</span><span class="text"><strong>Watch</strong> — the output updates in real‑time as the video plays.</span></div>
-                <div class="step"><span class="num">5</span><span class="text"><strong>Capture</strong> — click ⏺ to save the current frame as PNG/SVG/TXT.</span></div>
-                <div class="step"><span class="num">6</span><span class="text"><strong>Record</strong> — click ● to record the full ASCII video (MP4). Click again or let the video end to stop.</span></div>
+                <div class="step"><span class="num">5</span><span class="text"><strong>Capture</strong> — click ⏺ to save the current frame as PNG.</span></div>
+                <div class="step"><span class="num">6</span><span class="text"><strong>Export</strong> — click ⬇ video to download the full ASCII video (MP4).</span></div>
             </div>
             <div class="footer-note">⚡ processes every frame in real‑time · <span>ASCII Video to Art Converter</span></div>
         </div>
 
-        <!-- ═══ DETAILED EXPLANATION CARD ═══ -->
+        <!-- ═══ DETAILED EXPLANATION ═══ -->
         <div class="card" style="border-color:#1a1a1a;">
             <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem;">
                 <span style="color:#ffffff; font-size:1.5rem;">⎇</span>
@@ -1021,10 +989,7 @@
                 <span style="flex:1; border-bottom:1px solid #1a1a1a;"></span>
                 <span class="badge">technical</span>
             </div>
-
             <div class="explainer">
-
-                <!-- 1. Video Decoding -->
                 <div class="explainer-block">
                     <div class="explainer-ascii">
                         <pre>  ╔═══════════════════════════╗
@@ -1060,7 +1025,6 @@
                     </div>
                 </div>
 
-                <!-- 2. Frame Grabbing & Scaling -->
                 <div class="explainer-block">
                     <div class="explainer-ascii">
                         <pre>  ┌─────────────┐
@@ -1098,7 +1062,6 @@
                     </div>
                 </div>
 
-                <!-- 3. Grayscale & Enhancement -->
                 <div class="explainer-block">
                     <div class="explainer-ascii">
                         <pre>  ╔════════════════════════╗
@@ -1135,7 +1098,6 @@
                     </div>
                 </div>
 
-                <!-- 4. Brightness → Character Mapping -->
                 <div class="explainer-block">
                     <div class="explainer-ascii">
                         <pre>  DARK  ████████████  LIGHT
@@ -1166,7 +1128,6 @@
                     </div>
                 </div>
 
-                <!-- 5. Rendering & Export -->
                 <div class="explainer-block" style="border-bottom: none; padding-bottom: 0;">
                     <div class="explainer-ascii">
                         <pre>  ╔═════════════════════════════╗
@@ -1195,12 +1156,11 @@
                             <li><strong>PNG (raster):</strong> Each ASCII frame is drawn onto a canvas with a monospace font and saved as a PNG image.</li>
                             <li><strong>SVG (vector):</strong> The ASCII text is wrapped in an SVG <code>&lt;text&gt;</code> element, producing a scalable, resolution‑independent graphic.</li>
                             <li><strong>TXT (plain):</strong> The raw ASCII string is saved as a plain text file.</li>
-                            <li><strong>Video (MP4):</strong> When recording, frames are captured at the video's framerate and compiled into an MP4 (or WebM fallback) using <code>MediaRecorder</code> + <code>canvas.captureStream()</code>.</li>
+                            <li><strong>Video (MP4):</strong> When you click "Download Video", the tool captures every frame of the video at 30 fps, renders each as ASCII art, and compiles them into an MP4 (with WebM fallback).</li>
                         </ul>
                         <p style="color:#666666; font-size:0.8rem; margin-top:0.3rem;">All exports use the current settings (charset, font, scale, etc.) at the moment of capture.</p>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -1219,7 +1179,6 @@
             const seekSlider = document.getElementById('seekSlider');
             const timeDisplay = document.getElementById('timeDisplay');
             const captureBtn = document.getElementById('captureBtn');
-            const recordBtn = document.getElementById('recordBtn');
 
             const widthSlider = document.getElementById('widthSlider');
             const widthNumber = document.getElementById('widthNumber');
@@ -1233,6 +1192,7 @@
             const downloadPngBtn = document.getElementById('downloadPngBtn');
             const downloadSvgBtn = document.getElementById('downloadSvgBtn');
             const downloadTxtBtn = document.getElementById('downloadTxtBtn');
+            const downloadVideoBtn = document.getElementById('downloadVideoBtn');
             const copyBtn = document.getElementById('copyBtn');
             const clearBtn = document.getElementById('clearBtn');
             const asciiOutput = document.getElementById('asciiOutput');
@@ -1240,6 +1200,10 @@
             const outputCard = document.getElementById('outputCard');
             const statusMsg = document.getElementById('statusMsg');
             const outputInfo = document.getElementById('outputInfo');
+            const widthWarning = document.getElementById('widthWarning');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
 
             // ─── state ──────────────────────────────────────────────────
             let currentVideoFile = null;
@@ -1247,18 +1211,8 @@
             let animationId = null;
             let isPlaying = false;
             let isProcessing = false;
-
-            // Recording state
-            let isRecording = false;
-            let mediaRecorder = null;
-            let recordedChunks = [];
-            let recordingCanvas = null;
-            let recordingCtx = null;
-            let recordingStream = null;
-            let recordingFrames = [];
-            let recordingStartTime = 0;
-            let frameCaptureInterval = null;
             let isExportingVideo = false;
+            const MAX_VIDEO_WIDTH = 160;
 
             // ─── charsets ─────────────────────────────────────────────
             const CHARSETS = {
@@ -1297,6 +1251,7 @@
             function showError(msg) { setStatus('✖ ' + msg, 'error'); }
             function showSuccess(msg) { setStatus('✔ ' + msg, 'success'); }
             function showInfo(msg) { setStatus('⟡ ' + msg, 'info'); }
+            function showWarning(msg) { setStatus('⚠ ' + msg, 'warning'); }
 
             // ─── sharpening filter ─────────────────────────────────────
             function applySharpen(imageData) {
@@ -1389,8 +1344,8 @@
             }
 
             // ─── get ASCII lines ─────────────────────────────────────
-            function getAsciiLines() {
-                const width = parseInt(widthNumber.value, 10) || 80;
+            function getAsciiLines(overrideWidth) {
+                const width = overrideWidth || parseInt(widthNumber.value, 10) || 80;
                 const charset = charSetSelect.value;
                 const invert = invertCheck.checked;
                 const scale = parseFloat(scaleFactor.value);
@@ -1417,15 +1372,21 @@
                     downloadPngBtn.disabled = false;
                     downloadSvgBtn.disabled = false;
                     downloadTxtBtn.disabled = false;
+                    downloadVideoBtn.disabled = false;
 
-                    // Auto-resize font to fit viewport
+                    // Auto-resize
                     autoResizeOutput(lines);
-
                     const info = `· ${lines.length}×${lines[0]?.length || 0}`;
                     outputInfo.textContent = info;
-                } catch (e) {
-                    // silent fail
-                }
+
+                    // Check width warning
+                    const currentWidth = parseInt(widthNumber.value, 10) || 80;
+                    if (currentWidth > MAX_VIDEO_WIDTH) {
+                        widthWarning.classList.add('active');
+                    } else {
+                        widthWarning.classList.remove('active');
+                    }
+                } catch (e) { /* silent */ }
 
                 isProcessing = false;
             }
@@ -1433,35 +1394,23 @@
             // ─── auto-resize output ──────────────────────────────────
             function autoResizeOutput(lines) {
                 if (!lines || lines.length === 0) return;
-
                 const wrapper = outputWrapper;
                 const maxHeight = window.innerHeight * 0.6;
                 const maxWidth = wrapper.clientWidth - 32;
-
-                // Start with a reasonable font size
                 let fontSize = 14;
-                const minFont = 6;
-                const maxFont = 28;
-
-                // Calculate required dimensions at current font size
-                const charWidth = fontSize * 0.6;
-                const lineHeight = fontSize * 1.25;
+                const minFont = 5;
+                const maxFont = 30;
                 const maxLineLen = Math.max(...lines.map(l => l.length));
-                const totalWidth = maxLineLen * charWidth + 16;
-                const totalHeight = lines.length * lineHeight + 16;
 
-                // Binary search for best font size
                 let low = minFont,
                     high = maxFont;
                 let bestSize = fontSize;
-
                 for (let iter = 0; iter < 20; iter++) {
                     const mid = (low + high) / 2;
                     const cw = mid * 0.6;
                     const lh = mid * 1.25;
                     const tw = maxLineLen * cw + 16;
                     const th = lines.length * lh + 16;
-
                     if (tw <= maxWidth && th <= maxHeight) {
                         bestSize = mid;
                         low = mid;
@@ -1469,8 +1418,6 @@
                         high = mid;
                     }
                 }
-
-                // Clamp and apply
                 bestSize = Math.min(maxFont, Math.max(minFont, Math.round(bestSize * 10) / 10));
                 asciiOutput.style.fontSize = bestSize + 'px';
                 asciiOutput.style.lineHeight = (bestSize * 1.25 / bestSize) + '';
@@ -1480,174 +1427,9 @@
             function frameLoop() {
                 if (!videoPlayer.paused && videoPlayer.readyState >= 2) {
                     updateAscii();
-
-                    // If recording, capture frame for video
-                    if (isRecording) {
-                        captureRecordingFrame();
-                    }
                 }
-                if (isPlaying || isRecording) {
+                if (isPlaying) {
                     animationId = requestAnimationFrame(frameLoop);
-                }
-            }
-
-            // ─── recording frame capture ────────────────────────────
-            function captureRecordingFrame() {
-                if (!videoPlayer.videoWidth) return;
-                try {
-                    const lines = getAsciiLines();
-                    recordingFrames.push({
-                        lines: lines,
-                        time: videoPlayer.currentTime || 0
-                    });
-                } catch (e) {
-                    // ignore
-                }
-            }
-
-            // ─── start recording ─────────────────────────────────────
-            function startRecording() {
-                if (isRecording) return;
-                if (!videoPlayer.videoWidth) {
-                    showError('No video loaded.');
-                    return;
-                }
-                if (videoPlayer.paused) {
-                    showError('Please play the video first.');
-                    return;
-                }
-
-                isRecording = true;
-                recordingFrames = [];
-                recordBtn.textContent = '⏹ stop';
-                recordBtn.classList.add('active');
-                showInfo('🔴 Recording... (press stop or let video end)');
-
-                // If the video is already playing, the loop will capture frames
-                // If not, start the loop
-                if (!isPlaying) {
-                    isPlaying = true;
-                    if (animationId) cancelAnimationFrame(animationId);
-                    frameLoop();
-                }
-            }
-
-            // ─── stop recording ──────────────────────────────────────
-            function stopRecording(exportVideo = true) {
-                if (!isRecording) return;
-
-                isRecording = false;
-                recordBtn.textContent = '● record';
-                recordBtn.classList.remove('active');
-                showInfo('Processing recording...');
-
-                if (exportVideo && recordingFrames.length > 0) {
-                    exportRecordedVideo();
-                } else {
-                    showInfo('Recording stopped. No frames captured.');
-                }
-            }
-
-            // ─── export recorded video ──────────────────────────────
-            async function exportRecordedVideo() {
-                if (isExportingVideo) return;
-                if (recordingFrames.length === 0) {
-                    showError('No frames captured.');
-                    return;
-                }
-
-                isExportingVideo = true;
-                showInfo('🎬 Rendering video... ' + recordingFrames.length + ' frames');
-
-                try {
-                    // Determine canvas size from first frame
-                    const firstLines = recordingFrames[0].lines;
-                    const fontSize = 14;
-                    const charW = fontSize * 0.6;
-                    const lineH = fontSize * 1.25;
-                    const maxLen = Math.max(...firstLines.map(l => l.length));
-                    const pad = 32;
-                    const cw = maxLen * charW + pad * 2;
-                    const ch = firstLines.length * lineH + pad * 2;
-
-                    const canvas = document.createElement('canvas');
-                    canvas.width = Math.ceil(cw);
-                    canvas.height = Math.ceil(ch);
-                    const ctx = canvas.getContext('2d');
-
-                    // Use captureStream for reliable video encoding
-                    const fps = 30;
-                    const stream = canvas.captureStream(fps);
-
-                    // Prefer MP4, fallback to WebM
-                    const mimeTypes = [
-                        'video/mp4;codecs=h264',
-                        'video/mp4;codecs=avc1',
-                        'video/webm;codecs=vp9',
-                        'video/webm;codecs=vp8',
-                        'video/webm',
-                        'video/mp4'
-                    ];
-                    let selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m));
-                    if (!selectedMime) {
-                        selectedMime = 'video/webm';
-                    }
-
-                    const recorder = new MediaRecorder(stream, { mimeType: selectedMime });
-                    const chunks = [];
-
-                    recorder.ondataavailable = function(e) {
-                        if (e.data.size > 0) chunks.push(e.data);
-                    };
-
-                    let frameIndex = 0;
-                    const totalFrames = recordingFrames.length;
-
-                    function drawNextFrame() {
-                        if (frameIndex >= totalFrames) {
-                            setTimeout(() => {
-                                recorder.stop();
-                            }, 300);
-                            return;
-                        }
-
-                        const frameLines = recordingFrames[frameIndex].lines;
-                        ctx.fillStyle = '#000000';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        ctx.font = `${fontSize}px ${fontSelector.value}`;
-                        ctx.textBaseline = 'top';
-                        ctx.fillStyle = '#cccccc';
-                        for (let j = 0; j < frameLines.length; j++) {
-                            ctx.fillText(frameLines[j], pad, pad + j * lineH);
-                        }
-
-                        frameIndex++;
-                        requestAnimationFrame(drawNextFrame);
-                    }
-
-                    recorder.start(1000);
-
-                    recorder.onstop = function() {
-                        const blob = new Blob(chunks, { type: selectedMime });
-                        const url = URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        let ext = 'webm';
-                        if (selectedMime.includes('mp4') || selectedMime.includes('avc1')) ext = 'mp4';
-                        link.download = `ascii_video.${ext}`;
-                        link.href = url;
-                        link.click();
-                        URL.revokeObjectURL(url);
-                        isExportingVideo = false;
-                        showSuccess(`✅ Video exported (${ext.toUpperCase()}) — ${totalFrames} frames.`);
-                        // Reset recording state
-                        recordingFrames = [];
-                    };
-
-                    drawNextFrame();
-
-                } catch (err) {
-                    showError('Video export error: ' + err.message);
-                    isExportingVideo = false;
                 }
             }
 
@@ -1688,6 +1470,7 @@
                     videoContainer.style.display = 'block';
                     document.getElementById('controlsRow').style.display = 'flex';
                     generateBtn.disabled = false;
+                    downloadVideoBtn.disabled = false;
                     videoPlayer.play().then(() => {
                         isPlaying = true;
                         playPauseBtn.textContent = '⏸ pause';
@@ -1723,10 +1506,6 @@
                         cancelAnimationFrame(animationId);
                         animationId = null;
                     }
-                    // If recording, stop and export
-                    if (isRecording) {
-                        stopRecording(true);
-                    }
                 };
                 videoPlayer.onerror = function() {
                     showError('Video error. Please try a different format.');
@@ -1742,35 +1521,19 @@
                 });
             }
 
-            // ─── capture frame (manual) ─────────────────────────────
+            // ─── capture frame ──────────────────────────────────────
             function captureFrame() {
                 if (!currentVideoFile || !videoPlayer.videoWidth) {
                     showError('No video loaded.');
                     return;
                 }
                 updateAscii();
-
-                // Offer download options with a simple prompt
-                const format = confirm('Download as PNG? (Cancel = TXT)') ? 'png' : 'txt';
                 const lines = currentAsciiString.split('\n');
                 const fontSize = 14;
                 const charW = fontSize * 0.6;
                 const lineH = fontSize * 1.25;
                 const maxLen = Math.max(...lines.map(l => l.length));
                 const pad = 32;
-
-                if (format === 'txt') {
-                    const blob = new Blob([currentAsciiString], { type: 'text/plain;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.download = 'ascii-frame.txt';
-                    link.href = url;
-                    link.click();
-                    URL.revokeObjectURL(url);
-                    showSuccess('TXT downloaded.');
-                    return;
-                }
-
                 const cw = maxLen * charW + pad * 2;
                 const ch = lines.length * lineH + pad * 2;
                 const canvas = document.createElement('canvas');
@@ -1785,12 +1548,261 @@
                 for (let i = 0; i < lines.length; i++) {
                     ctx.fillText(lines[i], pad, pad + i * lineH);
                 }
-
                 const link = document.createElement('a');
                 link.download = 'ascii-frame.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 showSuccess('PNG downloaded.');
+            }
+
+            // ─── download full video ────────────────────────────────
+            async function downloadFullVideo() {
+                if (isExportingVideo) return;
+                if (!videoPlayer.videoWidth || !videoPlayer.videoHeight) {
+                    showError('No video loaded.');
+                    return;
+                }
+
+                const width = parseInt(widthNumber.value, 10) || 80;
+                if (width > MAX_VIDEO_WIDTH) {
+                    showWarning(`Video export limited to ${MAX_VIDEO_WIDTH} chars/line to prevent corruption. Your setting is ${width}.`);
+                    return;
+                }
+
+                const duration = videoPlayer.duration;
+                if (!duration || duration <= 0) {
+                    showError('Invalid video duration.');
+                    return;
+                }
+
+                isExportingVideo = true;
+                downloadVideoBtn.disabled = true;
+                progressContainer.classList.add('active');
+                progressFill.style.width = '0%';
+                progressText.textContent = 'Initializing...';
+
+                try {
+                    // Store original playback state
+                    const wasPlaying = !videoPlayer.paused;
+                    if (wasPlaying) videoPlayer.pause();
+
+                    // Determine capture parameters
+                    const fps = 30;
+                    const frameInterval = 1 / fps;
+                    let totalFrames = Math.ceil(duration / frameInterval);
+                    // Cap at a reasonable number to prevent memory issues
+                    const maxFrames = 3600; // 2 minutes at 30fps
+                    if (totalFrames > maxFrames) {
+                        // Use a lower framerate for long videos
+                        const newFps = Math.ceil(totalFrames / maxFrames * fps);
+                        const newInterval = 1 / newFps;
+                        totalFrames = Math.ceil(duration / newInterval);
+                        progressText.textContent = `Long video — using ${newFps} fps (${totalFrames} frames)`;
+                    } else {
+                        progressText.textContent = `Capturing ${totalFrames} frames at ${fps} fps...`;
+                    }
+
+                    const effectiveInterval = duration / totalFrames;
+                    const capturedFrames = [];
+
+                    // Capture frames by seeking
+                    const capturePromises = [];
+                    let lastProgress = 0;
+
+                    for (let i = 0; i < totalFrames; i++) {
+                        const time = i * effectiveInterval;
+                        if (time >= duration) break;
+
+                        // Seek to time
+                        videoPlayer.currentTime = time;
+                        await new Promise((resolve) => {
+                            const seekHandler = () => {
+                                videoPlayer.removeEventListener('seeked', seekHandler);
+                                resolve();
+                            };
+                            videoPlayer.addEventListener('seeked', seekHandler);
+                            // If seek takes too long, fallback
+                            setTimeout(() => {
+                                videoPlayer.removeEventListener('seeked', seekHandler);
+                                resolve();
+                            }, 500);
+                        });
+
+                        // Capture frame
+                        try {
+                            const lines = getAsciiLines(width);
+                            capturedFrames.push(lines);
+                        } catch (e) {
+                            // If frame capture fails, use previous frame or blank
+                            if (capturedFrames.length > 0) {
+                                capturedFrames.push(capturedFrames[capturedFrames.length - 1]);
+                            } else {
+                                // Fallback: capture again
+                                try {
+                                    const fallbackLines = getAsciiLines(width);
+                                    capturedFrames.push(fallbackLines);
+                                } catch (e2) {
+                                    capturedFrames.push(['Error']);
+                                }
+                            }
+                        }
+
+                        // Update progress
+                        const progress = (i + 1) / totalFrames * 100;
+                        if (progress - lastProgress >= 1) {
+                            progressFill.style.width = Math.min(100, progress) + '%';
+                            progressText.textContent = `Capturing ${i+1}/${totalFrames} frames (${Math.round(progress)}%)`;
+                            lastProgress = progress;
+                        }
+
+                        // Yield to UI
+                        if (i % 10 === 0) {
+                            await new Promise(r => setTimeout(r, 10));
+                        }
+                    }
+
+                    progressText.textContent = `Rendering ${capturedFrames.length} frames to video...`;
+                    progressFill.style.width = '90%';
+
+                    if (capturedFrames.length === 0) {
+                        showError('No frames captured.');
+                        isExportingVideo = false;
+                        downloadVideoBtn.disabled = false;
+                        progressContainer.classList.remove('active');
+                        return;
+                    }
+
+                    // Render video from frames
+                    const videoBlob = await renderFramesToVideo(capturedFrames);
+
+                    // Download
+                    const url = URL.createObjectURL(videoBlob);
+                    const link = document.createElement('a');
+                    let ext = 'webm';
+                    if (videoBlob.type.includes('mp4') || videoBlob.type.includes('h264') || videoBlob.type.includes('avc1')) {
+                        ext = 'mp4';
+                    }
+                    link.download = `ascii_video.${ext}`;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+
+                    progressFill.style.width = '100%';
+                    progressText.textContent = `✅ Done! Downloaded ${ext.toUpperCase()} — ${capturedFrames.length} frames.`;
+                    showSuccess(`Video exported (${ext.toUpperCase()}) — ${capturedFrames.length} frames.`);
+
+                } catch (err) {
+                    showError('Video export failed: ' + err.message);
+                    progressText.textContent = '❌ Error: ' + err.message;
+                } finally {
+                    isExportingVideo = false;
+                    downloadVideoBtn.disabled = false;
+                    setTimeout(() => {
+                        progressContainer.classList.remove('active');
+                    }, 3000);
+                }
+            }
+
+            // ─── render frames to video ─────────────────────────────
+            function renderFramesToVideo(frames) {
+                return new Promise((resolve, reject) => {
+                    try {
+                        if (frames.length === 0) {
+                            reject(new Error('No frames to render'));
+                            return;
+                        }
+
+                        const fontSize = 14;
+                        const charW = fontSize * 0.6;
+                        const lineH = fontSize * 1.25;
+                        const firstLines = frames[0];
+                        const maxLen = Math.max(...firstLines.map(l => l.length));
+                        const pad = 32;
+                        const cw = maxLen * charW + pad * 2;
+                        const ch = firstLines.length * lineH + pad * 2;
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = Math.ceil(Math.min(cw, 1280));
+                        canvas.height = Math.ceil(Math.min(ch, 720));
+                        const ctx = canvas.getContext('2d');
+
+                        // Handle scaling if canvas is too large
+                        let scale = 1;
+                        if (canvas.width > 1280 || canvas.height > 720) {
+                            const scaleX = 1280 / canvas.width;
+                            const scaleY = 720 / canvas.height;
+                            scale = Math.min(scaleX, scaleY, 1);
+                            canvas.width = Math.ceil(canvas.width * scale);
+                            canvas.height = Math.ceil(canvas.height * scale);
+                        }
+
+                        // Use appropriate font size
+                        const renderFontSize = Math.max(6, Math.min(20, fontSize * scale));
+
+                        // MIME type detection
+                        const mimeTypes = [
+                            'video/mp4;codecs=h264',
+                            'video/mp4;codecs=avc1',
+                            'video/webm;codecs=vp9',
+                            'video/webm;codecs=vp8',
+                            'video/webm',
+                            'video/mp4'
+                        ];
+                        let selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m));
+                        if (!selectedMime) {
+                            selectedMime = 'video/webm';
+                        }
+
+                        const stream = canvas.captureStream(30);
+                        const recorder = new MediaRecorder(stream, { mimeType: selectedMime });
+                        const chunks = [];
+
+                        recorder.ondataavailable = function(e) {
+                            if (e.data.size > 0) chunks.push(e.data);
+                        };
+
+                        let frameIndex = 0;
+                        const totalFrames = frames.length;
+
+                        function drawNextFrame() {
+                            if (frameIndex >= totalFrames) {
+                                recorder.stop();
+                                return;
+                            }
+
+                            const frameLines = frames[frameIndex];
+                            ctx.fillStyle = '#000000';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                            ctx.font = `${renderFontSize}px ${fontSelector.value}`;
+                            ctx.textBaseline = 'top';
+                            ctx.fillStyle = '#cccccc';
+
+                            const effectivePad = pad * scale;
+                            const effectiveLineH = renderFontSize * 1.25;
+
+                            for (let j = 0; j < frameLines.length; j++) {
+                                if (j * effectiveLineH > canvas.height) break;
+                                ctx.fillText(frameLines[j].substring(0, Math.floor(canvas.width / (renderFontSize * 0.6))),
+                                    effectivePad, effectivePad + j * effectiveLineH);
+                            }
+
+                            frameIndex++;
+                            requestAnimationFrame(drawNextFrame);
+                        }
+
+                        recorder.onstop = function() {
+                            const blob = new Blob(chunks, { type: selectedMime });
+                            resolve(blob);
+                        };
+
+                        recorder.start(1000);
+                        drawNextFrame();
+
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
             }
 
             // ─── downloads ─────────────────────────────────────────────
@@ -1897,6 +1909,7 @@
                 downloadPngBtn.disabled = true;
                 downloadSvgBtn.disabled = true;
                 downloadTxtBtn.disabled = true;
+                downloadVideoBtn.disabled = true;
                 generateBtn.disabled = true;
                 fileInput.value = '';
                 if (animationId) {
@@ -1907,22 +1920,22 @@
                 playPauseBtn.textContent = '▶ play';
                 setStatus('⟡ upload a video to begin', '');
                 if (videoPlayer.src) URL.revokeObjectURL(videoPlayer.src);
-
-                // Reset recording state
-                if (isRecording) {
-                    isRecording = false;
-                    recordBtn.textContent = '● record';
-                    recordBtn.classList.remove('active');
-                }
-                recordingFrames = [];
+                progressContainer.classList.remove('active');
                 isExportingVideo = false;
                 outputInfo.textContent = '';
+                widthWarning.classList.remove('active');
             }
 
             // ─── sync slider + number ─────────────────────────────────
             widthSlider.addEventListener('input', function() {
                 widthNumber.value = this.value;
                 if (videoPlayer.videoWidth) updateAscii();
+                // Show/hide warning
+                if (parseInt(this.value) > MAX_VIDEO_WIDTH) {
+                    widthWarning.classList.add('active');
+                } else {
+                    widthWarning.classList.remove('active');
+                }
             });
             widthNumber.addEventListener('input', function() {
                 let v = parseInt(this.value, 10);
@@ -1931,6 +1944,11 @@
                 if (v > 500) v = 500;
                 widthSlider.value = v;
                 if (videoPlayer.videoWidth) updateAscii();
+                if (v > MAX_VIDEO_WIDTH) {
+                    widthWarning.classList.add('active');
+                } else {
+                    widthWarning.classList.remove('active');
+                }
             });
 
             // ─── other controls cause live update ──────────────────
@@ -1945,7 +1963,7 @@
                 });
             });
 
-            // ─── window resize triggers reflow ──────────────────────
+            // ─── resize ──────────────────────────────────────────────
             window.addEventListener('resize', function() {
                 if (videoPlayer.videoWidth && currentAsciiString) {
                     const lines = currentAsciiString.split('\n');
@@ -1978,19 +1996,13 @@
 
             playPauseBtn.addEventListener('click', togglePlay);
             captureBtn.addEventListener('click', captureFrame);
-            recordBtn.addEventListener('click', function() {
-                if (isRecording) {
-                    stopRecording(true);
-                } else {
-                    startRecording();
-                }
-            });
             generateBtn.addEventListener('click', function() {
                 if (videoPlayer.videoWidth) updateAscii();
             });
             downloadPngBtn.addEventListener('click', downloadPng);
             downloadSvgBtn.addEventListener('click', downloadSvg);
             downloadTxtBtn.addEventListener('click', downloadTxt);
+            downloadVideoBtn.addEventListener('click', downloadFullVideo);
             copyBtn.addEventListener('click', copyAscii);
             clearBtn.addEventListener('click', clearAll);
 
@@ -2001,7 +2013,8 @@
             window.__videoAscii = {
                 updateAscii,
                 captureFrame,
-                clearAll
+                clearAll,
+                downloadFullVideo
             };
 
         })();
