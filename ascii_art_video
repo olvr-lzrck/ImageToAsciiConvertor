@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -569,6 +570,23 @@
             font-style: italic;
         }
 
+        .performance-note {
+            background: #1a1a1a;
+            border-left: 3px solid #ffaa44;
+            padding: 0.5rem 0.8rem;
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+            color: #aaaaaa;
+            border-radius: 4px;
+            display: none;
+        }
+        .performance-note.active {
+            display: block;
+        }
+        .performance-note strong {
+            color: #ffffff;
+        }
+
         .manual {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -907,6 +925,11 @@
                 </div>
             </div>
 
+            <!-- Performance note -->
+            <div id="performanceNote" class="performance-note">
+                ⚡ <strong>Performance note:</strong> Your ASCII grid is large. The export will automatically scale the font to keep the canvas within safe limits for your machine.
+            </div>
+
             <!-- Progress bar -->
             <div class="progress-container" id="progressContainer">
                 <div class="progress-bar">
@@ -1060,7 +1083,7 @@
                             <li><strong>PNG (raster):</strong> Each ASCII frame is drawn onto a canvas with a monospace font and saved as a PNG image.</li>
                             <li><strong>SVG (vector):</strong> The ASCII text is wrapped in an SVG <code>&lt;text&gt;</code> element, producing a scalable, resolution‑independent graphic.</li>
                             <li><strong>TXT (plain):</strong> The raw ASCII string is saved as a plain text file.</li>
-                            <li><strong>Video (MP4):</strong> The tool captures every frame by seeking through the video, renders the full ASCII grid onto a canvas sized to fit all lines, and compiles it into an MP4 (or WebM fallback). The font is automatically scaled to keep the canvas within a safe size while preserving every line.</li>
+                            <li><strong>Video (MP4):</strong> The tool plays the video at normal speed and captures each frame using a canvas stream. The canvas dimensions are adaptively scaled to fit your ASCII grid while keeping the pixel count within a safe limit (4M pixels). The encoding uses a reasonable bitrate to keep file sizes manageable.</li>
                         </ul>
                         <p style="color:#666666; font-size:0.8rem; margin-top:0.3rem;">All exports use the current settings (charset, font, scale, etc.) at the moment of capture.</p>
                     </div>
@@ -1107,6 +1130,7 @@
             const progressContainer = document.getElementById('progressContainer');
             const progressFill = document.getElementById('progressFill');
             const progressText = document.getElementById('progressText');
+            const performanceNote = document.getElementById('performanceNote');
 
             // ─── state ──────────────────────────────────────────────────
             let currentVideoFile = null;
@@ -1316,7 +1340,7 @@
                 asciiOutput.style.lineHeight = (bestSize * 1.25 / bestSize) + '';
             }
 
-            // ─── animation loop ──────────────────────────────────────
+            // ─── animation loop (live preview) ──────────────────────
             function frameLoop() {
                 if (!videoPlayer.paused && videoPlayer.readyState >= 2) {
                     updateAscii();
@@ -1448,7 +1472,7 @@
                 showSuccess('PNG downloaded.');
             }
 
-            // ─── robust video export (seeking-based, full grid) ────
+            // ─── fast video export using real‑time playback ─────────
             async function downloadFullVideo() {
                 if (isExportingVideo) return;
                 if (!videoPlayer.videoWidth || !videoPlayer.videoHeight) {
@@ -1466,13 +1490,24 @@
                 const wasPlaying = !videoPlayer.paused;
                 const currentTime = videoPlayer.currentTime;
 
+                // Pause and seek to start
                 videoPlayer.pause();
+                videoPlayer.currentTime = 0;
+                await new Promise(resolve => {
+                    const handler = () => {
+                        videoPlayer.removeEventListener('seeked', handler);
+                        resolve();
+                    };
+                    videoPlayer.addEventListener('seeked', handler);
+                    setTimeout(resolve, 1000);
+                });
 
                 isExportingVideo = true;
                 downloadVideoBtn.disabled = true;
                 progressContainer.classList.add('active');
                 progressFill.style.width = '0%';
                 progressText.textContent = 'Initializing...';
+                performanceNote.classList.remove('active');
 
                 try {
                     const width = parseInt(widthNumber.value, 10) || 80;
@@ -1482,65 +1517,58 @@
                     const contrast = contrastCheck.checked;
                     const sharpen = sharpenCheck.checked;
 
-                    // Determine the ASCII grid size from the first frame
-                    videoPlayer.currentTime = 0;
-                    await new Promise(resolve => {
-                        const handler = () => {
-                            videoPlayer.removeEventListener('seeked', handler);
-                            resolve();
-                        };
-                        videoPlayer.addEventListener('seeked', handler);
-                        setTimeout(resolve, 1000);
-                    });
-
+                    // Determine ASCII grid size from first frame
                     const firstLines = frameToAscii(videoPlayer, width, charset, invert, scale, contrast, sharpen, true);
                     const numLines = firstLines.length;
                     const maxLineLen = Math.max(...firstLines.map(l => l.length));
 
-                    // Base font and padding for recording
+                    // Compute canvas size with base font
                     const baseFontSize = 16;
                     const pad = 32;
-                    const charW = baseFontSize * 0.6;
-                    const lineH = baseFontSize * 1.25;
+                    let natWidth = maxLineLen * baseFontSize * 0.6 + pad * 2;
+                    let natHeight = numLines * baseFontSize * 1.25 + pad * 2;
 
-                    // Natural size
-                    let natWidth = maxLineLen * charW + pad * 2;
-                    let natHeight = numLines * lineH + pad * 2;
+                    // Adaptive scaling to stay within 4M pixels
+                    const MAX_PIXELS = 4000000;
+                    let finalFontSize = baseFontSize;
+                    let recWidth = natWidth;
+                    let recHeight = natHeight;
+                    const pixelArea = natWidth * natHeight;
 
-                    // If natural size is too large for browser encoder, scale down the font
-                    const maxCanvasDim = 4096; // safe limit
-                    let fontScale = 1;
-                    if (natWidth > maxCanvasDim || natHeight > maxCanvasDim) {
-                        const scaleW = maxCanvasDim / natWidth;
-                        const scaleH = maxCanvasDim / natHeight;
-                        fontScale = Math.min(scaleW, scaleH);
-                        // Minimum font size to keep text readable
-                        const minFontSize = 4;
-                        if (baseFontSize * fontScale < minFontSize) {
-                            fontScale = minFontSize / baseFontSize;
-                        }
+                    if (pixelArea > MAX_PIXELS) {
+                        const scaleFactor = Math.sqrt(MAX_PIXELS / pixelArea);
+                        finalFontSize = Math.max(4, Math.floor(baseFontSize * scaleFactor));
+                        recWidth = Math.ceil(maxLineLen * finalFontSize * 0.6 + pad * 2);
+                        recHeight = Math.ceil(numLines * finalFontSize * 1.25 + pad * 2);
+                        performanceNote.classList.add('active');
+                        performanceNote.textContent =
+                            `⚡ Performance note: Large ASCII grid (${Math.round(pixelArea/1000000)}M pixels). Font scaled to ${finalFontSize}px (${Math.round(recWidth*recHeight/1000000)}M pixels).`;
+                    } else {
+                        performanceNote.classList.remove('active');
                     }
-                    // Also limit to reasonable output size (max 1920x1080) for video quality
-                    // but we don't want to crop, so we allow larger if needed.
-                    // We'll cap at 4096x4096 max, but we already did.
 
-                    const finalFontSize = baseFontSize * fontScale;
-                    const recWidth = Math.ceil(maxLineLen * finalFontSize * 0.6 + pad * 2);
-                    const recHeight = Math.ceil(numLines * finalFontSize * 1.25 + pad * 2);
+                    // Cap max dimension to avoid browser issues
+                    const MAX_DIM = 4096;
+                    if (recWidth > MAX_DIM || recHeight > MAX_DIM) {
+                        const scaleDim = Math.min(MAX_DIM / recWidth, MAX_DIM / recHeight);
+                        finalFontSize = Math.max(4, Math.floor(finalFontSize * scaleDim));
+                        recWidth = Math.ceil(maxLineLen * finalFontSize * 0.6 + pad * 2);
+                        recHeight = Math.ceil(numLines * finalFontSize * 1.25 + pad * 2);
+                        performanceNote.classList.add('active');
+                        performanceNote.textContent += ` Canvas capped at ${MAX_DIM}×${MAX_DIM}.`;
+                    }
 
-                    // Create recording canvas
-                    const recordingCanvas = document.createElement('canvas');
-                    recordingCanvas.width = recWidth;
-                    recordingCanvas.height = recHeight;
-                    const ctx = recordingCanvas.getContext('2d');
+                    // Create canvas and stream
+                    const canvas = document.createElement('canvas');
+                    canvas.width = recWidth;
+                    canvas.height = recHeight;
+                    const ctx = canvas.getContext('2d');
 
-                    // Determine framerate (adaptive)
-                    let fps = 30;
-                    if (duration > 120) fps = 24;
-                    if (duration > 300) fps = 15;
-                    if (duration > 600) fps = 10;
+                    // Determine recording FPS (match video or cap at 30)
+                    const videoFps = 30; // assume 30 if can't get
+                    const fps = Math.min(30, videoFps);
 
-                    const stream = recordingCanvas.captureStream(fps);
+                    const stream = canvas.captureStream(fps);
                     const mimeTypes = [
                         'video/mp4;codecs=h264',
                         'video/mp4;codecs=avc1',
@@ -1554,104 +1582,105 @@
                         selectedMime = 'video/webm';
                     }
 
-                    const recorder = new MediaRecorder(stream, { mimeType: selectedMime });
+                    // Set bitrate to 5 Mbps for quality
+                    const recorder = new MediaRecorder(stream, {
+                        mimeType: selectedMime,
+                        videoBitsPerSecond: 5000000
+                    });
                     const chunks = [];
 
                     recorder.ondataavailable = function(e) {
                         if (e.data.size > 0) chunks.push(e.data);
                     };
 
-                    // Seek through video and capture frames
-                    const totalFrames = Math.ceil(duration * fps);
-                    let capturedFrames = [];
-                    const step = 1 / fps;
-
+                    // Start playing video from beginning
                     videoPlayer.currentTime = 0;
-                    await new Promise(resolve => {
-                        const handler = () => {
-                            videoPlayer.removeEventListener('seeked', handler);
-                            resolve();
-                        };
-                        videoPlayer.addEventListener('seeked', handler);
-                        setTimeout(resolve, 1000);
-                    });
+                    await videoPlayer.play();
+
+                    let startTime = performance.now();
+                    let lastProgress = 0;
+                    let framesRecorded = 0;
 
                     recorder.start(1000);
 
-                    for (let i = 0; i < totalFrames; i++) {
-                        const time = Math.min(i * step, duration - 0.001);
-                        videoPlayer.currentTime = time;
-                        await new Promise(resolve => {
-                            const handler = () => {
-                                videoPlayer.removeEventListener('seeked', handler);
-                                resolve();
-                            };
-                            videoPlayer.addEventListener('seeked', handler);
-                            // if seek takes too long, fallback
-                            setTimeout(() => {
-                                videoPlayer.removeEventListener('seeked', handler);
-                                resolve();
-                            }, 200);
-                        });
-
-                        // Draw frame
-                        const lines = frameToAscii(videoPlayer, width, charset, invert, scale, contrast, sharpen, true);
-                        ctx.fillStyle = '#000000';
-                        ctx.fillRect(0, 0, recWidth, recHeight);
-                        ctx.font = `${finalFontSize}px ${fontSelector.value}`;
-                        ctx.textBaseline = 'top';
-                        ctx.fillStyle = '#cccccc';
-                        for (let j = 0; j < lines.length; j++) {
-                            const line = lines[j].substring(0, Math.floor(recWidth / (finalFontSize * 0.6)));
-                            ctx.fillText(line, pad, pad + j * finalFontSize * 1.25);
+                    // Capture loop using requestAnimationFrame
+                    const captureLoop = () => {
+                        if (videoPlayer.paused && !videoPlayer.ended) {
+                            requestAnimationFrame(captureLoop);
+                            return;
                         }
 
-                        // Update progress
-                        const progress = ((i + 1) / totalFrames) * 100;
-                        progressFill.style.width = Math.min(100, progress) + '%';
-                        progressText.textContent = `Capturing ${i+1}/${totalFrames} (${Math.round(progress)}%)`;
-
-                        // Yield to UI
-                        if (i % 10 === 0) {
-                            await new Promise(r => setTimeout(r, 10));
+                        if (videoPlayer.ended) {
+                            recorder.stop();
+                            return;
                         }
-                    }
 
-                    // Stop recording
-                    recorder.stop();
-                    await new Promise(resolve => recorder.onstop = resolve);
+                        // Draw current frame
+                        try {
+                            const lines = frameToAscii(videoPlayer, width, charset, invert, scale, contrast, sharpen, true);
+                            ctx.fillStyle = '#000000';
+                            ctx.fillRect(0, 0, recWidth, recHeight);
+                            ctx.font = `${finalFontSize}px ${fontSelector.value}`;
+                            ctx.textBaseline = 'top';
+                            ctx.fillStyle = '#cccccc';
+                            for (let j = 0; j < lines.length; j++) {
+                                const line = lines[j].substring(0, Math.floor(recWidth / (finalFontSize * 0.6)));
+                                ctx.fillText(line, pad, pad + j * finalFontSize * 1.25);
+                            }
+                            framesRecorded++;
+                        } catch (e) {
+                            // ignore
+                        }
 
-                    const blob = new Blob(chunks, { type: selectedMime });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    let ext = 'webm';
-                    if (selectedMime.includes('mp4') || selectedMime.includes('avc1')) ext = 'mp4';
-                    link.download = `ascii_video.${ext}`;
-                    link.href = url;
-                    link.click();
-                    URL.revokeObjectURL(url);
+                        // Update progress based on video time
+                        const progress = (videoPlayer.currentTime / duration) * 100;
+                        if (progress - lastProgress >= 1) {
+                            progressFill.style.width = Math.min(100, progress) + '%';
+                            progressText.textContent =
+                                `Recording ${Math.round(progress)}% · ${Math.round(videoPlayer.currentTime)}/${Math.round(duration)}s · ${framesRecorded} frames`;
+                            lastProgress = progress;
+                        }
 
-                    showSuccess(`✅ Video exported (${ext.toUpperCase()}) — ${totalFrames} frames.`);
-                    progressFill.style.width = '100%';
-                    progressText.textContent = `✅ Done! ${totalFrames} frames, ${duration.toFixed(1)}s.`;
+                        requestAnimationFrame(captureLoop);
+                    };
 
-                    // Restore playback state
-                    videoPlayer.pause();
-                    videoPlayer.currentTime = currentTime;
-                    if (wasPlaying) {
-                        videoPlayer.play().catch(() => {});
-                    }
-                    isExportingVideo = false;
-                    downloadVideoBtn.disabled = false;
-                    setTimeout(() => {
-                        progressContainer.classList.remove('active');
-                    }, 3000);
+                    captureLoop();
+
+                    // When recorder stops, download
+                    recorder.onstop = function() {
+                        const blob = new Blob(chunks, { type: selectedMime });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        let ext = 'webm';
+                        if (selectedMime.includes('mp4') || selectedMime.includes('avc1')) ext = 'mp4';
+                        link.download = `ascii_video.${ext}`;
+                        link.href = url;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                        showSuccess(`✅ Video exported (${ext.toUpperCase()}) — ${framesRecorded} frames.`);
+                        progressFill.style.width = '100%';
+                        progressText.textContent = `✅ Done! ${framesRecorded} frames, ${duration.toFixed(1)}s.`;
+
+                        // Restore playback state
+                        videoPlayer.pause();
+                        videoPlayer.currentTime = currentTime;
+                        if (wasPlaying) {
+                            videoPlayer.play().catch(() => {});
+                        }
+                        isExportingVideo = false;
+                        downloadVideoBtn.disabled = false;
+                        setTimeout(() => {
+                            progressContainer.classList.remove('active');
+                            performanceNote.classList.remove('active');
+                        }, 3000);
+                    };
 
                 } catch (err) {
                     showError('Video export failed: ' + err.message);
                     isExportingVideo = false;
                     downloadVideoBtn.disabled = false;
                     progressContainer.classList.remove('active');
+                    performanceNote.classList.remove('active');
                     videoPlayer.pause();
                     videoPlayer.currentTime = currentTime;
                     if (wasPlaying) {
@@ -1778,6 +1807,7 @@
                 progressContainer.classList.remove('active');
                 isExportingVideo = false;
                 outputInfo.textContent = '';
+                performanceNote.classList.remove('active');
             }
 
             // ─── sync slider + number ─────────────────────────────────
