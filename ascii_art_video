@@ -54,7 +54,7 @@
 
         /* ── container ── */
         .app {
-            max-width: 1100px;
+            max-width: 1200px;
             width: 100%;
         }
 
@@ -68,9 +68,9 @@
         .ascii-header .logo {
             display: inline-block;
             background: #0a0a0a;
-            padding: 0.4rem 1.2rem 0.2rem 1.2rem;
-            border-radius: 12px;
-            border: 1px solid #333333;
+            padding: 0.8rem 1.5rem 0.4rem 1.5rem;
+            border-radius: 16px;
+            border: 1px solid #444444;
             transition: border-color 0.3s;
         }
 
@@ -79,33 +79,35 @@
         }
 
         .ascii-header .logo pre {
-            font-size: 0.65rem;
+            font-size: 1.2rem;
             line-height: 1.1;
             color: #ffffff;
-            letter-spacing: 0.8px;
+            letter-spacing: 1px;
             white-space: pre;
             margin: 0;
+            text-shadow: 0 0 30px #ffffff22;
         }
 
         .ascii-header .subtitle {
-            font-size: 0.7rem;
-            letter-spacing: 3px;
+            font-size: 0.9rem;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            color: #666666;
-            margin-top: 0.3rem;
+            color: #888888;
+            margin-top: 0.5rem;
             font-weight: 300;
         }
 
         .ascii-header .subtitle span {
             color: #ffffff;
+            text-shadow: 0 0 20px #ffffff44;
         }
 
         .glow-divider {
             border: none;
-            height: 1px;
-            background: #333333;
-            margin: 0.5rem auto 0 auto;
-            max-width: 70%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #444444, #888888, #444444, transparent);
+            margin: 0.8rem auto 0 auto;
+            max-width: 80%;
         }
 
         /* ── cards ── */
@@ -114,7 +116,7 @@
             border: 1px solid #222222;
             border-radius: 16px;
             padding: 1.75rem;
-            margin-bottom: 1.75rem;
+            margin-bottom: 2rem;
             box-shadow: 0 8px 32px #00000066;
             transition: border-color 0.3s;
         }
@@ -127,7 +129,7 @@
         .upload-zone {
             border: 2px dashed #222222;
             border-radius: 12px;
-            padding: 2.8rem 1.5rem;
+            padding: 3rem 1.5rem;
             text-align: center;
             cursor: pointer;
             transition: border-color 0.3s, background 0.3s;
@@ -146,7 +148,7 @@
         }
 
         .upload-zone .icon {
-            font-size: 3rem;
+            font-size: 4rem;
             line-height: 1;
             margin-bottom: 0.5rem;
             color: #ffffff;
@@ -155,7 +157,7 @@
         .upload-zone p {
             margin: 0.2rem 0;
             color: #888888;
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         .upload-zone .browse {
@@ -169,7 +171,7 @@
 
         .upload-zone .sub {
             font-size: 0.8rem;
-            color: #444444;
+            color: #555555;
             margin-top: 0.5rem;
         }
 
@@ -183,7 +185,7 @@
 
         .video-container video {
             max-width: 100%;
-            max-height: 400px;
+            max-height: 450px;
             border-radius: 8px;
             border: 1px solid #222222;
             background: #000000;
@@ -197,8 +199,8 @@
         }
 
         .video-controls .btn {
-            padding: 0.3rem 1rem;
-            font-size: 0.65rem;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.7rem;
         }
 
         .video-controls input[type="range"] {
@@ -206,53 +208,15 @@
             min-width: 100px;
             accent-color: #ffffff;
             background: transparent;
-            height: 3px;
+            height: 4px;
             cursor: pointer;
         }
 
         .video-controls .time-display {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #888888;
-            min-width: 80px;
+            min-width: 100px;
             text-align: center;
-        }
-
-        /* ── preview row ── */
-        .preview-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin-top: 1.75rem;
-            align-items: flex-start;
-        }
-
-        .preview-col {
-            flex: 1 1 220px;
-            min-width: 0;
-        }
-
-        .preview-col .label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #555555;
-            display: block;
-            margin-bottom: 0.4rem;
-        }
-
-        .preview-col img,
-        .preview-col canvas {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            border: 1px solid #222222;
-            display: block;
-            background: #000000;
-            image-rendering: pixelated;
-        }
-
-        .preview-col canvas {
-            width: 100%;
         }
 
         /* ── controls ── */
@@ -521,9 +485,37 @@
             background: transparent;
         }
 
+        .btn-red {
+            border-color: #ff444466;
+            color: #ff4444;
+        }
+
+        .btn-red:hover:not(:disabled) {
+            background: #ff444422;
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+
+        .btn-red.active {
+            background: #ff444422;
+            border-color: #ff4444;
+            color: #ff4444;
+            animation: pulse-red 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-red {
+            0%,
+            100% {
+                box-shadow: 0 0 10px #ff444422;
+            }
+            50% {
+                box-shadow: 0 0 30px #ff444466;
+            }
+        }
+
         /* ── status ── */
         .status-msg {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             margin-top: 0.75rem;
             padding: 0.4rem 0.8rem;
             border-radius: 6px;
@@ -562,7 +554,7 @@
         }
 
         .output-header .title {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #888888;
@@ -579,25 +571,25 @@
             font-size: 0.6rem;
         }
 
-        .ascii-output {
+        .ascii-output-wrapper {
+            position: relative;
             background: #000000;
             border: 1px solid #222222;
             border-radius: 10px;
-            padding: 1.5rem;
             overflow: auto;
-            max-height: 600px;
-            font-family: 'Courier New', 'Fira Code', monospace;
-            font-size: 14px;
-            line-height: 1.25;
-            white-space: pre;
-            color: #cccccc;
-            position: relative;
-            transition: border-color 0.3s;
-            min-height: 100px;
+            max-height: 70vh;
+            min-height: 120px;
+            transition: max-height 0.3s;
         }
 
-        .ascii-output:focus-within {
-            border-color: #ffffff44;
+        .ascii-output {
+            padding: 1rem;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.2;
+            white-space: pre;
+            color: #cccccc;
+            transition: font-size 0.2s;
         }
 
         .ascii-output .placeholder {
@@ -655,27 +647,97 @@
             font-weight: 600;
         }
 
-        .badge {
-            display: inline-block;
-            font-size: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 0.1rem 0.5rem;
-            border-radius: 4px;
-            background: #222222;
-            color: #ffffff;
-            border: 1px solid #444444;
+        /* ── detailed explanation ── */
+        .explainer {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
         }
 
-        .footer-note {
-            text-align: center;
-            font-size: 0.6rem;
-            color: #333333;
-            letter-spacing: 1px;
-            margin-top: 0.5rem;
+        .explainer-block {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 2rem;
         }
-        .footer-note span {
-            color: #555555;
+
+        .explainer-block:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .explainer-ascii {
+            flex: 0 0 auto;
+            background: #050505;
+            padding: 1rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid #1a1a1a;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #aaaaaa;
+            min-width: 180px;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .explainer-text {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .explainer-text h3 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 0.3rem;
+        }
+
+        .explainer-text p {
+            font-size: 0.9rem;
+            color: #bbbbbb;
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+
+        .explainer-text .highlight {
+            color: #ffffff;
+            background: #222222;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .explainer-text .code {
+            display: inline-block;
+            background: #111111;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #eeeeee;
+            border: 1px solid #2a2a2a;
+            font-family: inherit;
+        }
+
+        .explainer-text ul {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .explainer-text ul li::before {
+            content: "▸ ";
+            color: #888888;
+        }
+
+        .explainer-text ul li {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            margin-bottom: 0.2rem;
         }
 
         /* ── responsive ── */
@@ -702,16 +764,11 @@
             .control-group input[type="range"] {
                 width: 100px;
             }
-            .preview-row {
-                flex-direction: column;
-                gap: 1rem;
-            }
             .ascii-header .logo pre {
-                font-size: 0.45rem;
+                font-size: 0.8rem;
             }
             .ascii-output {
                 font-size: 10px;
-                max-height: 350px;
                 padding: 0.8rem;
             }
             .manual {
@@ -720,6 +777,18 @@
             .video-controls {
                 flex-wrap: wrap;
             }
+            .explainer-block {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .explainer-ascii {
+                width: 100%;
+                text-align: center;
+                font-size: 0.6rem;
+            }
+            .ascii-output-wrapper {
+                max-height: 50vh;
+            }
         }
 
         @media (max-width: 480px) {
@@ -727,13 +796,13 @@
                 grid-template-columns: 1fr;
             }
             .ascii-header .logo pre {
-                font-size: 0.35rem;
+                font-size: 0.5rem;
             }
             .upload-zone {
                 padding: 1.5rem 0.8rem;
             }
             .upload-zone .icon {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             .ascii-header .logo {
                 padding: 0.3rem 0.6rem 0.1rem 0.6rem;
@@ -741,22 +810,72 @@
             .control-group select {
                 max-width: 120px;
             }
+            .explainer-ascii {
+                font-size: 0.5rem;
+            }
+            .ascii-output-wrapper {
+                max-height: 40vh;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            background: #222222;
+            color: #ffffff;
+            border: 1px solid #444444;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #333333;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+        .footer-note span {
+            color: #555555;
+        }
+
+        /* ── recording indicator ── */
+        .recording-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4444;
+            margin-right: 6px;
+            animation: blink 0.8s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.2;
+            }
         }
     </style>
 </head>
 <body>
     <div class="app">
 
-        <!-- ═══ HEADER with "ASCII" logo ═══ -->
+        <!-- ═══ HEADER with HUGE ASCII logo ═══ -->
         <header class="ascii-header">
             <div class="logo">
                 <pre>
-     █████╗ ███████╗ ██████╗██╗██╗
-    ██╔══██╗██╔════╝██╔════╝██║██║
-    ███████║███████╗██║     ██║██║
-    ██╔══██║╚════██║██║     ██║██║
-    ██║  ██║███████║╚██████╗██║██║
-    ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝
+     █████╗ ███████╗ ██████╗██╗██╗    ██╗   ██╗██╗██████╗ ███████╗ ██████╗ 
+    ██╔══██╗██╔════╝██╔════╝██║██║    ██║   ██║██║██╔══██╗██╔════╝██╔═══██╗
+    ███████║███████╗██║     ██║██║    ██║   ██║██║██║  ██║█████╗  ██║   ██║
+    ██╔══██║╚════██║██║     ██║██║    ╚██╗ ██╔╝██║██║  ██║██╔══╝  ██║   ██║
+    ██║  ██║███████║╚██████╗██║██║     ╚████╔╝ ██║██████╔╝███████╗╚██████╔╝
+    ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝      ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝ 
                 </pre>
             </div>
             <div class="subtitle">✦ <span>video</span> to <span>art</span> converter ✦</div>
@@ -779,7 +898,8 @@
                     <button class="btn" id="playPauseBtn">⏸ pause</button>
                     <input type="range" id="seekSlider" min="0" max="100" value="0" />
                     <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
-                    <button class="btn btn-ghost" id="captureBtn">⏺ capture frame</button>
+                    <button class="btn btn-magenta" id="captureBtn">⏺ capture</button>
+                    <button class="btn btn-red" id="recordBtn">● record</button>
                 </div>
             </div>
 
@@ -863,20 +983,22 @@
         <!-- ═══ OUTPUT CARD ═══ -->
         <div class="card" id="outputCard" style="display:none;">
             <div class="output-header">
-                <span class="title">⟡ ascii output (live)</span>
+                <span class="title">⟡ ascii output <span id="outputInfo" style="color:#555555;font-weight:300;"></span></span>
                 <div class="actions">
                     <button class="btn btn-ghost" id="copyBtn">⎘ copy</button>
                     <button class="btn btn-ghost" id="clearBtn">✕ clear</button>
                 </div>
             </div>
-            <div class="ascii-output" id="asciiOutput"><span class="placeholder">⟡ video will appear here as ASCII</span></div>
+            <div class="ascii-output-wrapper" id="outputWrapper">
+                <div class="ascii-output" id="asciiOutput"><span class="placeholder">⟡ video will appear here as ASCII</span></div>
+            </div>
         </div>
 
         <!-- ═══ MANUAL CARD ═══ -->
         <div class="card" style="border-color:#1a1a1a;">
             <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.6rem;">
-                <span style="color:#ffffff; font-size:1.1rem;">⎔</span>
-                <span style="font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; color:#888888;">how to use</span>
+                <span style="color:#ffffff; font-size:1.2rem;">⎔</span>
+                <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:2px; color:#888888;">how to use</span>
                 <span style="flex:1; border-bottom:1px solid #1a1a1a;"></span>
                 <span class="badge">video</span>
             </div>
@@ -885,10 +1007,201 @@
                 <div class="step"><span class="num">2</span><span class="text"><strong>Play</strong> — use the controls to play/pause and seek.</span></div>
                 <div class="step"><span class="num">3</span><span class="text"><strong>Adjust</strong> — set chars/line, charset, font, scale, etc.</span></div>
                 <div class="step"><span class="num">4</span><span class="text"><strong>Watch</strong> — the output updates in real‑time as the video plays.</span></div>
-                <div class="step"><span class="num">5</span><span class="text"><strong>Capture</strong> — click the frame button to save the current ASCII frame as PNG, SVG, or TXT.</span></div>
-                <div class="step"><span class="num">6</span><span class="text"><strong>Copy</strong> — grab the current frame text to your clipboard.</span></div>
+                <div class="step"><span class="num">5</span><span class="text"><strong>Capture</strong> — click ⏺ to save the current frame as PNG/SVG/TXT.</span></div>
+                <div class="step"><span class="num">6</span><span class="text"><strong>Record</strong> — click ● to record the full ASCII video (MP4). Click again or let the video end to stop.</span></div>
             </div>
             <div class="footer-note">⚡ processes every frame in real‑time · <span>ASCII Video to Art Converter</span></div>
+        </div>
+
+        <!-- ═══ DETAILED EXPLANATION CARD ═══ -->
+        <div class="card" style="border-color:#1a1a1a;">
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem;">
+                <span style="color:#ffffff; font-size:1.5rem;">⎇</span>
+                <span style="font-size:0.8rem; text-transform:uppercase; letter-spacing:3px; color:#888888;">how it works — deep dive</span>
+                <span style="flex:1; border-bottom:1px solid #1a1a1a;"></span>
+                <span class="badge">technical</span>
+            </div>
+
+            <div class="explainer">
+
+                <!-- 1. Video Decoding -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>  ╔═══════════════════════════╗
+  ║      VIDEO FILE          ║
+  ║  ┌─────────────────┐    ║
+  ║  │   Container     │    ║
+  ║  │   (MP4, WebM)   │    ║
+  ║  └─────────────────┘    ║
+  ║         │               ║
+  ║         ▼               ║
+  ║  ┌─────────────────┐    ║
+  ║  │  Demuxer        │    ║
+  ║  │  extracts video │    ║
+  ║  │  & audio tracks │    ║
+  ║  └─────────────────┘    ║
+  ║         │               ║
+  ║         ▼               ║
+  ║  ┌─────────────────┐    ║
+  ║  │  Decoder        │    ║
+  ║  │  (H.264, VP9)   │    ║
+  ║  └─────────────────┘    ║
+  ╚═══════════════════════════╝</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>1. video decoding</h3>
+                        <p>The browser's built‑in <span class="highlight">Media Source Extensions</span> and <span class="highlight">HTML5 video</span> API handle the heavy lifting.</p>
+                        <ul>
+                            <li><strong>Demuxing:</strong> The container (MP4, WebM) is split into separate video and audio streams.</li>
+                            <li><strong>Decoding:</strong> The compressed video frames (H.264, VP9, etc.) are decoded into raw YUV or RGB pixel data.</li>
+                            <li><strong>Frame access:</strong> We use <code>video.currentTime</code> and draw the current frame onto a hidden canvas using <code>ctx.drawImage(video)</code>.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.8rem; margin-top:0.3rem;">This happens entirely in the GPU, making it extremely fast and power‑efficient.</p>
+                    </div>
+                </div>
+
+                <!-- 2. Frame Grabbing & Scaling -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>  ┌─────────────┐
+  │   FRAME     │
+  │   (raw)     │
+  │  1920×1080  │
+  └──────┬──────┘
+         │
+         ▼  scale factor
+  ┌─────────────┐
+  │   SCALED    │
+  │   IMAGE     │
+  │   W×H       │
+  │   W = chars │
+  │   × scale   │
+  │   H = auto  │
+  └──────┬──────┘
+         │
+         ▼  grayscale
+  ┌─────────────┐
+  │  GRAYSCALE  │
+  │  0–255 per  │
+  │  pixel      │
+  └─────────────┘</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>2. frame grabbing &amp; scaling</h3>
+                        <p>Each frame is extracted and preprocessed in a few simple steps:</p>
+                        <ul>
+                            <li><strong>Grabbing:</strong> <code>drawImage()</code> copies the current video frame onto a small offscreen canvas.</li>
+                            <li><strong>Scaling:</strong> The canvas dimensions are set to <span class="highlight">chars/line × scale</span> (width) and the height is computed automatically to preserve aspect ratio, using a correction factor for monospace characters (<code>0.52</code>).</li>
+                            <li><strong>Resolution control:</strong> Lower scale (0.25× – 0.5×) reduces detail but speeds up processing, while higher scale (2× – 4×) captures fine details for large‑format ASCII art.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.8rem; margin-top:0.3rem;">The scaling is done using <span class="highlight">bicubic interpolation</span> (the browser's default) for smooth results.</p>
+                    </div>
+                </div>
+
+                <!-- 3. Grayscale & Enhancement -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>  ╔════════════════════════╗
+  ║    GRAYSCALE VALUE     ║
+  ║    = 0.299·R + 0.587·G ║
+  ║      + 0.114·B         ║
+  ╚════════════════════════╝
+         │
+         ▼  optional
+  ┌─────────────────┐
+  │   CONTRAST      │
+  │   (value‑128)   │
+  │    × 1.5 + 128  │
+  └─────────────────┘
+         │
+         ▼  optional
+  ┌─────────────────┐
+  │   SHARPEN       │
+  │   kernel:       │
+  │   [0,-1,0]      │
+  │   [-1,5,-1]     │
+  │   [0,-1,0]      │
+  └─────────────────┘</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>3. grayscale &amp; enhancement</h3>
+                        <p>Each pixel's RGB values are converted to a single brightness value:</p>
+                        <ul>
+                            <li><strong>Luminance formula:</strong> <span class="code">Y = 0.299·R + 0.587·G + 0.114·B</span> (ITU‑R BT.709 standard).</li>
+                            <li><strong>Contrast (optional):</strong> Pushes mid‑tones toward black or white: <span class="code">Y′ = (Y − 128) × 1.5 + 128</span>, clamped to 0–255.</li>
+                            <li><strong>Sharpen (optional):</strong> Applies a 3×3 convolution kernel to emphasize edges, making the final ASCII more crisp.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.8rem; margin-top:0.3rem;">These enhancements are applied per‑frame and can be toggled live while the video plays.</p>
+                    </div>
+                </div>
+
+                <!-- 4. Brightness → Character Mapping -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>  DARK  ████████████  LIGHT
+  ┌─────────────────────┐
+  │  @  #  8  W  M  *   │
+  │  o  a  h  k  b  d   │
+  │  p  q  w  m  Z  O   │
+  │  0  Q  L  C  J  U   │
+  │  Y  X  z  c  v  u   │
+  │  n  x  r  j  f  t   │
+  │  /  \  |  (  )  1   │
+  │  {  }  [  ]  ?  -   │
+  │  _  +  ~  <  >  i   │
+  │  !  l  I  ;  :  "   │
+  │  ^  `  '  .  ' ' '  │
+  └─────────────────────┘</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>4. brightness → character mapping</h3>
+                        <p>Every grayscale pixel value (0–255) is mapped to a character from the chosen <span class="highlight">charset</span>:</p>
+                        <ul>
+                            <li><strong>Index calculation:</strong> <span class="code">charIndex = round( brightness / 255 × (charset.length − 1) )</span></li>
+                            <li><strong>Dark pixels</strong> get dense characters like <code>@</code>, <code>#</code>, <code>8</code>.</li>
+                            <li><strong>Bright pixels</strong> get sparse characters like <code>.</code>, <code>'</code>, or space.</li>
+                            <li><strong>Invert (optional):</strong> Reverses the mapping (<span class="code">brightness = 1 − brightness</span>) for a negative effect.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.8rem; margin-top:0.3rem;">Different charsets produce distinct visual styles – from the classic <code>standard</code> to the highly detailed <code>vibe</code> or the blocky <code>blocks</code>.</p>
+                    </div>
+                </div>
+
+                <!-- 5. Rendering & Export -->
+                <div class="explainer-block" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="explainer-ascii">
+                        <pre>  ╔═════════════════════════════╗
+  ║   ASCII STRING              ║
+  ║   (2D array of chars)       ║
+  ╚═════════════════════════════╝
+         │
+         ├──────────────┬───────────────┐
+         ▼              ▼               ▼
+  ┌──────────┐  ┌──────────┐   ┌──────────┐
+  │  PNG     │  │  SVG     │   │  TXT     │
+  │ (canvas) │  │ (vector) │   │ (plain)  │
+  └──────────┘  └──────────┘   └──────────┘
+         │
+         ▼
+  ┌──────────┐
+  │  VIDEO   │
+  │  (MP4)   │
+  └──────────┘</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>5. rendering &amp; export</h3>
+                        <p>The final ASCII grid is displayed in the output area and can be exported in multiple formats:</p>
+                        <ul>
+                            <li><strong>Live preview:</strong> The text is rendered in a monospace font, with your chosen font family and size.</li>
+                            <li><strong>PNG (raster):</strong> Each ASCII frame is drawn onto a canvas with a monospace font and saved as a PNG image.</li>
+                            <li><strong>SVG (vector):</strong> The ASCII text is wrapped in an SVG <code>&lt;text&gt;</code> element, producing a scalable, resolution‑independent graphic.</li>
+                            <li><strong>TXT (plain):</strong> The raw ASCII string is saved as a plain text file.</li>
+                            <li><strong>Video (MP4):</strong> When recording, frames are captured at the video's framerate and compiled into an MP4 (or WebM fallback) using <code>MediaRecorder</code> + <code>canvas.captureStream()</code>.</li>
+                        </ul>
+                        <p style="color:#666666; font-size:0.8rem; margin-top:0.3rem;">All exports use the current settings (charset, font, scale, etc.) at the moment of capture.</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
     </div>
@@ -906,6 +1219,7 @@
             const seekSlider = document.getElementById('seekSlider');
             const timeDisplay = document.getElementById('timeDisplay');
             const captureBtn = document.getElementById('captureBtn');
+            const recordBtn = document.getElementById('recordBtn');
 
             const widthSlider = document.getElementById('widthSlider');
             const widthNumber = document.getElementById('widthNumber');
@@ -922,8 +1236,10 @@
             const copyBtn = document.getElementById('copyBtn');
             const clearBtn = document.getElementById('clearBtn');
             const asciiOutput = document.getElementById('asciiOutput');
+            const outputWrapper = document.getElementById('outputWrapper');
             const outputCard = document.getElementById('outputCard');
             const statusMsg = document.getElementById('statusMsg');
+            const outputInfo = document.getElementById('outputInfo');
 
             // ─── state ──────────────────────────────────────────────────
             let currentVideoFile = null;
@@ -932,7 +1248,19 @@
             let isPlaying = false;
             let isProcessing = false;
 
-            // ─── charsets (same as before) ─────────────────────────────
+            // Recording state
+            let isRecording = false;
+            let mediaRecorder = null;
+            let recordedChunks = [];
+            let recordingCanvas = null;
+            let recordingCtx = null;
+            let recordingStream = null;
+            let recordingFrames = [];
+            let recordingStartTime = 0;
+            let frameCaptureInterval = null;
+            let isExportingVideo = false;
+
+            // ─── charsets ─────────────────────────────────────────────
             const CHARSETS = {
                 vibe: [
                     '@', '$', '%', '&', '#', 'B', '8', 'W', 'M', '*',
@@ -1005,7 +1333,7 @@
             }
 
             // ─── frame to ASCII ──────────────────────────────────────
-            function frameToAscii(videoElement, targetWidth, charsetName, invert, scale, contrast, sharpen) {
+            function frameToAscii(videoElement, targetWidth, charsetName, invert, scale, contrast, sharpen, rawLines) {
                 const charset = CHARSETS[charsetName] || CHARSETS.standard;
                 const aspect = videoElement.videoWidth / videoElement.videoHeight;
                 const charAspect = 0.52;
@@ -1055,18 +1383,13 @@
                     }
                     lines.push(line);
                 }
+
+                if (rawLines) return lines;
                 return lines.join('\n');
             }
 
-            // ─── update ASCII output ──────────────────────────────────
-            function updateAscii() {
-                if (!videoPlayer.videoWidth || !videoPlayer.videoHeight) {
-                    // No video loaded yet
-                    return;
-                }
-                if (isProcessing) return;
-                isProcessing = true;
-
+            // ─── get ASCII lines ─────────────────────────────────────
+            function getAsciiLines() {
                 const width = parseInt(widthNumber.value, 10) || 80;
                 const charset = charSetSelect.value;
                 const invert = invertCheck.checked;
@@ -1074,28 +1397,257 @@
                 const contrast = contrastCheck.checked;
                 const sharpen = sharpenCheck.checked;
 
-                const ascii = frameToAscii(videoPlayer, width, charset, invert, scale, contrast, sharpen);
-                currentAsciiString = ascii;
-                asciiOutput.textContent = ascii;
-                asciiOutput.style.fontFamily = fontSelector.value;
-                outputCard.style.display = 'block';
-                downloadPngBtn.disabled = false;
-                downloadSvgBtn.disabled = false;
-                downloadTxtBtn.disabled = false;
+                return frameToAscii(videoPlayer, width, charset, invert, scale, contrast, sharpen, true);
+            }
+
+            // ─── update ASCII output ──────────────────────────────────
+            function updateAscii() {
+                if (!videoPlayer.videoWidth || !videoPlayer.videoHeight) {
+                    return;
+                }
+                if (isProcessing) return;
+                isProcessing = true;
+
+                try {
+                    const lines = getAsciiLines();
+                    currentAsciiString = lines.join('\n');
+                    asciiOutput.textContent = currentAsciiString;
+                    asciiOutput.style.fontFamily = fontSelector.value;
+                    outputCard.style.display = 'block';
+                    downloadPngBtn.disabled = false;
+                    downloadSvgBtn.disabled = false;
+                    downloadTxtBtn.disabled = false;
+
+                    // Auto-resize font to fit viewport
+                    autoResizeOutput(lines);
+
+                    const info = `· ${lines.length}×${lines[0]?.length || 0}`;
+                    outputInfo.textContent = info;
+                } catch (e) {
+                    // silent fail
+                }
 
                 isProcessing = false;
             }
 
+            // ─── auto-resize output ──────────────────────────────────
+            function autoResizeOutput(lines) {
+                if (!lines || lines.length === 0) return;
+
+                const wrapper = outputWrapper;
+                const maxHeight = window.innerHeight * 0.6;
+                const maxWidth = wrapper.clientWidth - 32;
+
+                // Start with a reasonable font size
+                let fontSize = 14;
+                const minFont = 6;
+                const maxFont = 28;
+
+                // Calculate required dimensions at current font size
+                const charWidth = fontSize * 0.6;
+                const lineHeight = fontSize * 1.25;
+                const maxLineLen = Math.max(...lines.map(l => l.length));
+                const totalWidth = maxLineLen * charWidth + 16;
+                const totalHeight = lines.length * lineHeight + 16;
+
+                // Binary search for best font size
+                let low = minFont,
+                    high = maxFont;
+                let bestSize = fontSize;
+
+                for (let iter = 0; iter < 20; iter++) {
+                    const mid = (low + high) / 2;
+                    const cw = mid * 0.6;
+                    const lh = mid * 1.25;
+                    const tw = maxLineLen * cw + 16;
+                    const th = lines.length * lh + 16;
+
+                    if (tw <= maxWidth && th <= maxHeight) {
+                        bestSize = mid;
+                        low = mid;
+                    } else {
+                        high = mid;
+                    }
+                }
+
+                // Clamp and apply
+                bestSize = Math.min(maxFont, Math.max(minFont, Math.round(bestSize * 10) / 10));
+                asciiOutput.style.fontSize = bestSize + 'px';
+                asciiOutput.style.lineHeight = (bestSize * 1.25 / bestSize) + '';
+            }
+
             // ─── animation loop ──────────────────────────────────────
             function frameLoop() {
-                if (isPlaying && videoPlayer.paused) {
-                    // if paused, don't update
-                }
                 if (!videoPlayer.paused && videoPlayer.readyState >= 2) {
                     updateAscii();
+
+                    // If recording, capture frame for video
+                    if (isRecording) {
+                        captureRecordingFrame();
+                    }
                 }
-                if (isPlaying) {
+                if (isPlaying || isRecording) {
                     animationId = requestAnimationFrame(frameLoop);
+                }
+            }
+
+            // ─── recording frame capture ────────────────────────────
+            function captureRecordingFrame() {
+                if (!videoPlayer.videoWidth) return;
+                try {
+                    const lines = getAsciiLines();
+                    recordingFrames.push({
+                        lines: lines,
+                        time: videoPlayer.currentTime || 0
+                    });
+                } catch (e) {
+                    // ignore
+                }
+            }
+
+            // ─── start recording ─────────────────────────────────────
+            function startRecording() {
+                if (isRecording) return;
+                if (!videoPlayer.videoWidth) {
+                    showError('No video loaded.');
+                    return;
+                }
+                if (videoPlayer.paused) {
+                    showError('Please play the video first.');
+                    return;
+                }
+
+                isRecording = true;
+                recordingFrames = [];
+                recordBtn.textContent = '⏹ stop';
+                recordBtn.classList.add('active');
+                showInfo('🔴 Recording... (press stop or let video end)');
+
+                // If the video is already playing, the loop will capture frames
+                // If not, start the loop
+                if (!isPlaying) {
+                    isPlaying = true;
+                    if (animationId) cancelAnimationFrame(animationId);
+                    frameLoop();
+                }
+            }
+
+            // ─── stop recording ──────────────────────────────────────
+            function stopRecording(exportVideo = true) {
+                if (!isRecording) return;
+
+                isRecording = false;
+                recordBtn.textContent = '● record';
+                recordBtn.classList.remove('active');
+                showInfo('Processing recording...');
+
+                if (exportVideo && recordingFrames.length > 0) {
+                    exportRecordedVideo();
+                } else {
+                    showInfo('Recording stopped. No frames captured.');
+                }
+            }
+
+            // ─── export recorded video ──────────────────────────────
+            async function exportRecordedVideo() {
+                if (isExportingVideo) return;
+                if (recordingFrames.length === 0) {
+                    showError('No frames captured.');
+                    return;
+                }
+
+                isExportingVideo = true;
+                showInfo('🎬 Rendering video... ' + recordingFrames.length + ' frames');
+
+                try {
+                    // Determine canvas size from first frame
+                    const firstLines = recordingFrames[0].lines;
+                    const fontSize = 14;
+                    const charW = fontSize * 0.6;
+                    const lineH = fontSize * 1.25;
+                    const maxLen = Math.max(...firstLines.map(l => l.length));
+                    const pad = 32;
+                    const cw = maxLen * charW + pad * 2;
+                    const ch = firstLines.length * lineH + pad * 2;
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.ceil(cw);
+                    canvas.height = Math.ceil(ch);
+                    const ctx = canvas.getContext('2d');
+
+                    // Use captureStream for reliable video encoding
+                    const fps = 30;
+                    const stream = canvas.captureStream(fps);
+
+                    // Prefer MP4, fallback to WebM
+                    const mimeTypes = [
+                        'video/mp4;codecs=h264',
+                        'video/mp4;codecs=avc1',
+                        'video/webm;codecs=vp9',
+                        'video/webm;codecs=vp8',
+                        'video/webm',
+                        'video/mp4'
+                    ];
+                    let selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m));
+                    if (!selectedMime) {
+                        selectedMime = 'video/webm';
+                    }
+
+                    const recorder = new MediaRecorder(stream, { mimeType: selectedMime });
+                    const chunks = [];
+
+                    recorder.ondataavailable = function(e) {
+                        if (e.data.size > 0) chunks.push(e.data);
+                    };
+
+                    let frameIndex = 0;
+                    const totalFrames = recordingFrames.length;
+
+                    function drawNextFrame() {
+                        if (frameIndex >= totalFrames) {
+                            setTimeout(() => {
+                                recorder.stop();
+                            }, 300);
+                            return;
+                        }
+
+                        const frameLines = recordingFrames[frameIndex].lines;
+                        ctx.fillStyle = '#000000';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.font = `${fontSize}px ${fontSelector.value}`;
+                        ctx.textBaseline = 'top';
+                        ctx.fillStyle = '#cccccc';
+                        for (let j = 0; j < frameLines.length; j++) {
+                            ctx.fillText(frameLines[j], pad, pad + j * lineH);
+                        }
+
+                        frameIndex++;
+                        requestAnimationFrame(drawNextFrame);
+                    }
+
+                    recorder.start(1000);
+
+                    recorder.onstop = function() {
+                        const blob = new Blob(chunks, { type: selectedMime });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        let ext = 'webm';
+                        if (selectedMime.includes('mp4') || selectedMime.includes('avc1')) ext = 'mp4';
+                        link.download = `ascii_video.${ext}`;
+                        link.href = url;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                        isExportingVideo = false;
+                        showSuccess(`✅ Video exported (${ext.toUpperCase()}) — ${totalFrames} frames.`);
+                        // Reset recording state
+                        recordingFrames = [];
+                    };
+
+                    drawNextFrame();
+
+                } catch (err) {
+                    showError('Video export error: ' + err.message);
+                    isExportingVideo = false;
                 }
             }
 
@@ -1134,17 +1686,14 @@
                 videoPlayer.load();
                 videoPlayer.onloadedmetadata = function() {
                     videoContainer.style.display = 'block';
-                    // show controls
                     document.getElementById('controlsRow').style.display = 'flex';
                     generateBtn.disabled = false;
-                    // start playing if possible
                     videoPlayer.play().then(() => {
                         isPlaying = true;
                         playPauseBtn.textContent = '⏸ pause';
                         if (animationId) cancelAnimationFrame(animationId);
                         frameLoop();
                     }).catch(e => {
-                        // autoplay might be blocked; user can click play
                         showInfo('Press play to start');
                         isPlaying = false;
                         playPauseBtn.textContent = '▶ play';
@@ -1174,31 +1723,74 @@
                         cancelAnimationFrame(animationId);
                         animationId = null;
                     }
+                    // If recording, stop and export
+                    if (isRecording) {
+                        stopRecording(true);
+                    }
                 };
                 videoPlayer.onerror = function() {
                     showError('Video error. Please try a different format.');
                 };
-                // Also update when seeking
                 seekSlider.addEventListener('input', function() {
                     const duration = videoPlayer.duration;
                     if (duration) {
                         videoPlayer.currentTime = (this.value / 100) * duration;
                     }
                 });
-                // Manual update after seeking
                 videoPlayer.addEventListener('seeked', function() {
                     updateAscii();
                 });
             }
 
-            // ─── capture frame (manual) ──────────────────────────────
+            // ─── capture frame (manual) ─────────────────────────────
             function captureFrame() {
                 if (!currentVideoFile || !videoPlayer.videoWidth) {
                     showError('No video loaded.');
                     return;
                 }
                 updateAscii();
-                showSuccess('Frame captured! You can now download or copy it.');
+
+                // Offer download options with a simple prompt
+                const format = confirm('Download as PNG? (Cancel = TXT)') ? 'png' : 'txt';
+                const lines = currentAsciiString.split('\n');
+                const fontSize = 14;
+                const charW = fontSize * 0.6;
+                const lineH = fontSize * 1.25;
+                const maxLen = Math.max(...lines.map(l => l.length));
+                const pad = 32;
+
+                if (format === 'txt') {
+                    const blob = new Blob([currentAsciiString], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = 'ascii-frame.txt';
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    showSuccess('TXT downloaded.');
+                    return;
+                }
+
+                const cw = maxLen * charW + pad * 2;
+                const ch = lines.length * lineH + pad * 2;
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.ceil(cw);
+                canvas.height = Math.ceil(ch);
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.font = `${fontSize}px ${fontSelector.value}`;
+                ctx.textBaseline = 'top';
+                ctx.fillStyle = '#cccccc';
+                for (let i = 0; i < lines.length; i++) {
+                    ctx.fillText(lines[i], pad, pad + i * lineH);
+                }
+
+                const link = document.createElement('a');
+                link.download = 'ascii-frame.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showSuccess('PNG downloaded.');
             }
 
             // ─── downloads ─────────────────────────────────────────────
@@ -1314,14 +1906,23 @@
                 isPlaying = false;
                 playPauseBtn.textContent = '▶ play';
                 setStatus('⟡ upload a video to begin', '');
-                // release object URL
                 if (videoPlayer.src) URL.revokeObjectURL(videoPlayer.src);
+
+                // Reset recording state
+                if (isRecording) {
+                    isRecording = false;
+                    recordBtn.textContent = '● record';
+                    recordBtn.classList.remove('active');
+                }
+                recordingFrames = [];
+                isExportingVideo = false;
+                outputInfo.textContent = '';
             }
 
             // ─── sync slider + number ─────────────────────────────────
             widthSlider.addEventListener('input', function() {
                 widthNumber.value = this.value;
-                if (videoPlayer.videoWidth) updateAscii(); // live update
+                if (videoPlayer.videoWidth) updateAscii();
             });
             widthNumber.addEventListener('input', function() {
                 let v = parseInt(this.value, 10);
@@ -1342,6 +1943,16 @@
                 document.getElementById(id).addEventListener('change', function() {
                     if (videoPlayer.videoWidth) updateAscii();
                 });
+            });
+
+            // ─── window resize triggers reflow ──────────────────────
+            window.addEventListener('resize', function() {
+                if (videoPlayer.videoWidth && currentAsciiString) {
+                    const lines = currentAsciiString.split('\n');
+                    if (lines.length > 1) {
+                        autoResizeOutput(lines);
+                    }
+                }
             });
 
             // ─── events ────────────────────────────────────────────────
@@ -1367,6 +1978,13 @@
 
             playPauseBtn.addEventListener('click', togglePlay);
             captureBtn.addEventListener('click', captureFrame);
+            recordBtn.addEventListener('click', function() {
+                if (isRecording) {
+                    stopRecording(true);
+                } else {
+                    startRecording();
+                }
+            });
             generateBtn.addEventListener('click', function() {
                 if (videoPlayer.videoWidth) updateAscii();
             });
@@ -1380,7 +1998,11 @@
             clearAll();
 
             // expose for debugging
-            window.__videoAscii = { updateAscii, captureFrame, clearAll };
+            window.__videoAscii = {
+                updateAscii,
+                captureFrame,
+                clearAll
+            };
 
         })();
     </script>
