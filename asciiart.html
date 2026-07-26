@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ASCII Image to Art Converter</title>
+
+    <!-- ── Google Fonts for Fira Code, JetBrains Mono, Source Code Pro ── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
+
     <style>
         /* ── reset & base ── */
         *,
@@ -311,6 +317,7 @@
             background-position: right 8px center;
             padding-right: 28px;
             text-transform: lowercase;
+            max-width: 150px;
         }
 
         .control-group select:focus {
@@ -731,6 +738,9 @@
             .ascii-header .logo {
                 padding: 0.3rem 0.6rem 0.1rem 0.6rem;
             }
+            .control-group select {
+                max-width: 120px;
+            }
         }
 
         .badge {
@@ -820,6 +830,18 @@
                 </div>
 
                 <div class="control-group">
+                    <label for="fontSelector">font</label>
+                    <select id="fontSelector">
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Consolas, monospace">Consolas</option>
+                        <option value="Menlo, monospace">Menlo</option>
+                        <option value="'Fira Code', monospace" selected>Fira Code</option>
+                        <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+                        <option value="'Source Code Pro', monospace">Source Code Pro</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
                     <div class="toggle-wrap" id="invertToggle">
                         <input type="checkbox" id="invertCheck" />
                         <span class="toggle-label">invert</span>
@@ -859,7 +881,7 @@
             </div>
             <div class="manual">
                 <div class="step"><span class="num">1</span><span class="text"><strong>Upload</strong> — click or drag an image.</span></div>
-                <div class="step"><span class="num">2</span><span class="text"><strong>Adjust</strong> — set chars/line &amp; pick a charset.</span></div>
+                <div class="step"><span class="num">2</span><span class="text"><strong>Adjust</strong> — set chars/line &amp; pick a charset &amp; font.</span></div>
                 <div class="step"><span class="num">3</span><span class="text"><strong>Generate</strong> — press ⚡ and watch the art appear.</span></div>
                 <div class="step"><span class="num">4</span><span class="text"><strong>Export</strong> — download as PNG, SVG, or TXT.</span></div>
                 <div class="step"><span class="num">5</span><span class="text"><strong>Invert</strong> — toggle to reverse brightness.</span></div>
@@ -979,6 +1001,7 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
             const widthSlider = document.getElementById('widthSlider');
             const widthNumber = document.getElementById('widthNumber');
             const charSetSelect = document.getElementById('charSet');
+            const fontSelector = document.getElementById('fontSelector');
             const invertCheck = document.getElementById('invertCheck');
             const generateBtn = document.getElementById('generateBtn');
             const downloadPngBtn = document.getElementById('downloadPngBtn');
@@ -996,7 +1019,6 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
             let originalImage = null;
 
             // ─── charsets ──────────────────────────────────────────────
-            // "vibe" — meticulously tuned from the example: dark → light
             const CHARSETS = {
                 vibe: [
                     '@', '$', '%', '&', '#', 'B', '8', 'W', 'M', '*',
@@ -1088,7 +1110,6 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
             function imageToAscii(img, targetWidth, charsetName, invert) {
                 const charset = CHARSETS[charsetName] || CHARSETS.vibe;
                 const aspect = img.width / img.height;
-                // monospace chars are roughly 0.5× wide as tall
                 const charAspect = 0.52;
                 const targetHeight = Math.max(1, Math.round(targetWidth / aspect * charAspect));
 
@@ -1117,7 +1138,6 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                         const idx = y * targetWidth + x;
                         let val = gray[idx] / 255;
                         if (invert) val = 1 - val;
-                        // clamp
                         if (val < 0) val = 0;
                         if (val > 1) val = 1;
                         const charIdx = Math.round(val * (len - 1));
@@ -1152,6 +1172,8 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     const result = imageToAscii(originalImage, width, currentCharset, currentInvert);
                     currentAsciiString = result.ascii;
                     asciiOutput.textContent = currentAsciiString;
+                    // apply selected font
+                    asciiOutput.style.fontFamily = fontSelector.value;
                     outputCard.style.display = 'block';
                     downloadPngBtn.disabled = false;
                     downloadSvgBtn.disabled = false;
@@ -1181,7 +1203,8 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     const ctx = canvas.getContext('2d');
                     ctx.fillStyle = '#000000';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.font = `${fontSize}px 'Courier New', monospace`;
+                    // use selected font
+                    ctx.font = `${fontSize}px ${fontSelector.value}`;
                     ctx.textBaseline = 'top';
                     ctx.fillStyle = '#cccccc';
                     for (let i = 0; i < lines.length; i++) {
@@ -1206,10 +1229,11 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     const pad = 32;
                     const sw = maxLen * charW + pad * 2;
                     const sh = lines.length * lineH + pad * 2;
+                    // use selected font in SVG
                     let svg =
                         `<svg xmlns="http://www.w3.org/2000/svg" width="${sw}" height="${sh}" viewBox="0 0 ${sw} ${sh}">
               <rect width="100%" height="100%" fill="#000000"/>
-              <g font-family="'Courier New',monospace" font-size="${fontSize}" fill="#cccccc" dominant-baseline="hanging">`;
+              <g font-family="${fontSelector.value}" font-size="${fontSize}" fill="#cccccc" dominant-baseline="hanging">`;
                     for (let i = 0; i < lines.length; i++) {
                         const escaped = lines[i].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                         svg += `<text x="${pad}" y="${pad + i * lineH}">${escaped}</text>`;
@@ -1286,6 +1310,14 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                 if (v < 4) v = 4;
                 if (v > 500) v = 500;
                 widthSlider.value = v;
+            });
+
+            // ─── font selector ─────────────────────────────────────────
+            fontSelector.addEventListener('change', function() {
+                // update live preview font if there's content
+                if (currentAsciiString) {
+                    asciiOutput.style.fontFamily = this.value;
+                }
             });
 
             // ─── events ────────────────────────────────────────────────
