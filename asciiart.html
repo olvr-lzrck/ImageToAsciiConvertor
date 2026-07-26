@@ -638,7 +638,7 @@
             border-radius: 8px;
             border: 1px solid #1a1a1a;
             font-size: 0.65rem;
-            line-height: 1.2;
+            line-height: 1.3;
             color: #888888;
             min-width: 140px;
             font-family: 'Courier New', monospace;
@@ -670,6 +670,17 @@
             background: #222222;
             padding: 0.1rem 0.4rem;
             border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .explainer-text .code {
+            display: inline-block;
+            background: #111111;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #eeeeee;
+            border: 1px solid #2a2a2a;
             font-family: inherit;
         }
 
@@ -719,6 +730,7 @@
             .explainer-ascii {
                 width: 100%;
                 text-align: center;
+                font-size: 0.55rem;
             }
         }
 
@@ -740,6 +752,9 @@
             }
             .control-group select {
                 max-width: 120px;
+            }
+            .explainer-ascii {
+                font-size: 0.45rem;
             }
         }
 
@@ -841,7 +856,7 @@
                     </select>
                 </div>
 
-                <!-- ── NEW: Preprocessing controls ── -->
+                <!-- ── Preprocessing controls ── -->
                 <div class="control-group">
                     <label for="scaleFactor">scale</label>
                     <select id="scaleFactor">
@@ -1007,6 +1022,95 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
             </div>
         </div>
 
+        <!-- ═══ NEW: SCALING EXPLAINED CARD ═══ -->
+        <div class="card" style="border-color:#1a1a1a;">
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.2rem;">
+                <span style="color:#ffffff; font-size:1.1rem;">⟡</span>
+                <span style="font-size:0.6rem; text-transform:uppercase; letter-spacing:2px; color:#888888;">scaling explained</span>
+                <span style="flex:1; border-bottom:1px solid #1a1a1a;"></span>
+                <span class="badge">scale factor</span>
+            </div>
+
+            <div class="explainer">
+
+                <!-- Scaling explanation block -->
+                <div class="explainer-block">
+                    <div class="explainer-ascii">
+                        <pre>  ┌──────────────────────────────┐
+  │         SCALE FACTOR         │
+  ├──────────────────────────────┤
+  │                              │
+  │   0.25x   ████░░░░  coarse   │
+  │   0.5x    ██████░░  balanced │
+  │   1x      ████████  crisp    │
+  │   2x      ████████  detail   │
+  │   4x      ████████  max      │
+  │                              │
+  │   width = chars × scale      │
+  │   height = auto              │
+  └──────────────────────────────┘</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>what does "scale" do?</h3>
+                        <p>The <span class="highlight">scale factor</span> multiplies the resolution of the image <strong>before</strong> it's converted to ASCII.</p>
+                        <p style="color:#888888; font-size:0.8rem;">
+                            <strong>How it works:</strong> Your image is resized to <span class="code">width × scale</span> pixels, 
+                            then each pixel becomes one character. So with <strong>80 chars/line</strong> and <strong>2× scale</strong>, 
+                            the image is sampled at <strong>160 pixels wide</strong> — capturing much more detail.
+                        </p>
+                        <p style="color:#666666; font-size:0.7rem; margin-top:0.3rem;">
+                            • <strong>0.25× – 0.5×:</strong> Smaller sample grid = blockier, but much smaller output.<br />
+                            • <strong>1×:</strong> One pixel per character — crisp and balanced.<br />
+                            • <strong>2× – 4×:</strong> More pixels per character = finer detail, but larger file size.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Visual diagram: showing the pipeline -->
+                <div class="explainer-block" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="explainer-ascii">
+                        <pre>  ┌─────────────┐
+  │   ORIGINAL  │
+  │   IMAGE     │
+  │   ████████  │
+  └──────┬──────┘
+         │
+         ▼  scale factor
+  ┌─────────────┐
+  │   SCALED    │
+  │   IMAGE     │
+  │   ████████  │
+  └──────┬──────┘
+         │
+         ▼  brightness mapping
+  ┌─────────────┐
+  │   ASCII     │
+  │   OUTPUT    │
+  │   @@@@@@@@  │
+  └─────────────┘</pre>
+                    </div>
+                    <div class="explainer-text">
+                        <h3>visual breakdown</h3>
+                        <p>Each step in the pipeline transforms your image:</p>
+                        <p style="color:#888888; font-size:0.8rem;">
+                            <strong>1. Original</strong> — your uploaded photo.<br />
+                            <strong>2. Scaled</strong> — resized to <span class="highlight">chars × scale</span> pixels.<br />
+                            <strong>3. ASCII Output</strong> — each pixel becomes a character.
+                        </p>
+                        <p style="color:#666666; font-size:0.7rem; margin-top:0.3rem;">
+                            <strong>Example:</strong> With 80 chars/line and 4× scale, the image is sampled at 320 pixels wide. 
+                            This gives you <strong>4× more horizontal detail</strong> than 1× scale — perfect for complex images with lots of fine details.
+                        </p>
+                        <p style="color:#555555; font-size:0.7rem; margin-top:0.5rem; border-top:1px solid #1a1a1a; padding-top:0.5rem;">
+                            ⚡ <strong>Tip:</strong> Use lower scale (0.25× – 0.5×) for quick previews or tiny ASCII art. 
+                            Use higher scale (2× – 4×) for detailed, high‑resolution ASCII posters.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -1036,7 +1140,7 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
             const copyBtn = document.getElementById('copyBtn');
             const clearBtn = document.getElementById('clearBtn');
 
-            // ─── NEW: Preprocessing refs ─────────────────────────────
+            // ─── Preprocessing refs ────────────────────────────────────
             const scaleFactor = document.getElementById('scaleFactor');
             const contrastCheck = document.getElementById('contrastCheck');
             const sharpenCheck = document.getElementById('sharpenCheck');
@@ -1137,7 +1241,7 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                 ctx.putImageData(imageData, 0, 0);
             }
 
-            // ─── NEW: Sharpening filter ──────────────────────────────
+            // ─── Sharpening filter ────────────────────────────────────
             function applySharpen(imageData) {
                 const data = imageData.data;
                 const width = imageData.width;
@@ -1207,7 +1311,6 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     const idx = i * 4;
                     let g = Math.round(0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2]);
                     if (contrast) {
-                        // Apply contrast: (value - 128) * factor + 128
                         g = (g - 128) * contrastFactor + 128;
                         g = Math.min(255, Math.max(0, g));
                     }
@@ -1251,7 +1354,6 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     return;
                 }
 
-                // Get preprocessing values
                 const scale = parseFloat(scaleFactor.value);
                 const contrast = contrastCheck.checked;
                 const sharpen = sharpenCheck.checked;
@@ -1268,7 +1370,7 @@ _ + ~ < > i ! l I ; : " ^ ` ' .</pre>
                     downloadSvgBtn.disabled = false;
                     downloadTxtBtn.disabled = false;
                     const lines = currentAsciiString.split('\n').length;
-                    showSuccess(`Generated ${result.width}×${result.height} · ${lines} lines · charset: ${charset}`);
+                    showSuccess(`Generated ${result.width}×${result.height} · ${lines} lines · charset: ${charset} · scale: ${scale}×`);
                 } catch (err) {
                     showError('Generation error: ' + err.message);
                 }
